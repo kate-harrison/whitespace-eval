@@ -1,0 +1,453 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>make_fm_mask</title>
+      <meta name="generator" content="MATLAB 7.8">
+      <meta name="date" content="2010-12-05">
+      <meta name="m-file" content="make_fm_mask"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+   <body>
+      <div class="content"><pre class="codeinput"><span class="keyword">function</span> [] = make_fm_mask(fm_mask_label)
+<span class="comment">%   [] = make_fm_mask(fm_mask_label)</span>
+<span class="comment">%</span>
+<span class="comment">%   Actually makes CR and TV masks at the same time (more efficient/less overhead)</span>
+<span class="comment">% Make masks for various fading margins (1 = CR can transmit; 0 = CR may</span>
+<span class="comment">% not transmit)</span>
+<span class="comment">% 1 = can receive TV, 0 = cannot receive TV</span>
+<span class="comment">% Execution time: approx. 5 min per margin</span>
+
+
+<span class="keyword">if</span> (get_compute_status(fm_mask_label)==0)
+    <span class="keyword">return</span>;
+<span class="keyword">end</span>
+
+<span class="comment">% device_type = fm_mask_label.device_type;</span>
+map_size = fm_mask_label.map_size;
+m = fm_mask_label.margin_value;
+char_label = fm_mask_label.char_label;
+tx_haat = char_label.height;
+tx_power = char_label.power;
+
+[is_in_us lat_coords long_coords] = get_us_map(map_size, 1);
+chan_list = get_simulation_value(<span class="string">'chan_list'</span>);
+TNP = get_simulation_value(<span class="string">'TNP'</span>);
+dB_leak = 50;   <span class="comment">% This is how much each channel leaks (in dB) into its adjacent channels</span>
+leak = 1/(10^(dB_leak/10)); <span class="comment">% We will multiply the adjacent channel noise by this number</span>
+
+<span class="comment">% Load the tower data</span>
+load <span class="string">'chan_data_extra.mat'</span>
+<span class="comment">% Variables within</span>
+<span class="comment">% 	amsl_idx	7</span>
+<span class="comment">% 	asrn_idx	3</span>
+<span class="comment">% 	chan_data	&lt;8071x10 double&gt;</span>
+<span class="comment">% 	chan_no_idx	1</span>
+<span class="comment">% 	dist_th_idx	9</span>
+<span class="comment">% 	erp_idx	8           % kw</span>
+<span class="comment">% 	fac_id_idx	2</span>
+<span class="comment">% 	fcc_rp_idx	10</span>
+<span class="comment">% 	haat_idx	6       % m</span>
+<span class="comment">% 	lat_idx	4</span>
+<span class="comment">% 	long_idx	5</span>
+
+default_mask = get_us_map(map_size, length(chan_list));
+
+cr_coch_mask = default_mask;
+cr_adjc_mask = default_mask;
+tv_user_mask = default_mask;
+<span class="comment">%</span>
+<span class="comment">% % NOTE: Mostly copied code below this point (not refactored)</span>
+<span class="comment">%</span>
+<span class="comment">% Find the protection radius for each transmitter with this fade margin</span>
+<span class="comment">% Find rn-rp (rn_minus_rp) for each transmitter with this fade margin</span>
+<span class="comment">% Inside the rp, TV can be received</span>
+<span class="comment">% At (rn_minus_rp + rp) cochannel transmitters cannot operate</span>
+num_tx = length(chan_data);
+prot_radii = zeros(num_tx, 1);
+<span class="comment">%     rn_minus_rp = zeros(num_tx);</span>
+<span class="keyword">for</span> t = 1:num_tx
+    <span class="comment">% Note that ERP comes in kW and the function accepts ERP in W</span>
+    prot_radii(t) = get_protection_radius(chan_data(t, erp_idx)*1e3, chan_data(t, chan_no_idx), chan_data(t, haat_idx), m, TNP);
+    <span class="comment">%         rn_minus_rp(i) = get_rn_minus_rp(chan_data(i, erp_idx), chan_data(i, chan_no_idx), chan_data(i, haat_idx), m, TNP);</span>
+<span class="keyword">end</span>
+
+
+<span class="comment">% For each channel...</span>
+<span class="keyword">for</span> i = 1:length(chan_list)
+    display([<span class="string">'   Current channel: '</span> num2str(chan_list(i))]);
+
+    <span class="comment">% Find rn_minus_rp for cochannel situations</span>
+    rn_minus_rp = get_rn_minus_rp(tx_power/1e3, chan_list(i), tx_haat, m, TNP);
+
+    tx_indices = chan_data(:, chan_no_idx) == chan_list(i);
+    tx_list = chan_data(tx_indices,:);   <span class="comment">% Select only those transmitters on the current channel</span>
+    rp_list = prot_radii(tx_indices);    <span class="comment">% Grab their corresponding protection radii</span>
+    <span class="comment">%         rn_list = rn_minus_rp(tx_indices);   % ...and the corresponding rn_minus_rp</span>
+
+
+    <span class="comment">% Do we have adjacent channels?</span>
+    <span class="comment">%         up = (i &lt; length(chan_list)) &amp;&amp; (abs(get_freq(chan_list(i+1)) - get_freq(chan_list(i))) == 6);</span>
+    <span class="comment">%         down = (i &gt; 1) &amp;&amp; (abs(get_freq(chan_list(i-1)) - get_freq(chan_list(i))) == 6);</span>
+    up = has_frequency_neighbor(i, <span class="string">'up'</span>);
+    down = has_frequency_neighbor(i, <span class="string">'down'</span>);
+
+    <span class="keyword">if</span> (up)
+        tx_indices_up = chan_data(:, chan_no_idx) == chan_list(i+1);
+        tx_list_up = chan_data(tx_indices_up,:);
+        rp_list_up = prot_radii(tx_indices_up);
+        rn_minus_rp_up = get_rn_minus_rp(tx_power*leak/1e3, chan_list(i+1), tx_haat, m, TNP);
+        <span class="comment">%             display(['     Adjacent channel: ' num2str(chan_list(i+1))]);</span>
+    <span class="keyword">end</span>
+    <span class="keyword">if</span>(down)
+        tx_indices_down = chan_data(:, chan_no_idx) == chan_list(i-1);
+        tx_list_down = chan_data(tx_indices_down,:);
+        rp_list_down = prot_radii(tx_indices_down);
+        rn_minus_rp_down = get_rn_minus_rp(tx_power*leak/1e3, chan_list(i-1), tx_haat, m, TNP);
+        <span class="comment">%             display(['     Adjacent channel: ' num2str(chan_list(i-1))]);</span>
+    <span class="keyword">end</span>
+
+
+    <span class="comment">% For each point in the US...</span>
+    <span class="keyword">for</span> j = 1:length(lat_coords)
+        <span class="comment">%display(['Current latitude index: ' num2str(j) ' of ' num2str(length(lat_coords))]);</span>
+        <span class="keyword">for</span> k = 1:length(long_coords)
+
+
+            <span class="keyword">if</span> (is_in_us(j,k) == 0) <span class="comment">% If it's outside the US...</span>
+                <span class="keyword">continue</span>;           <span class="comment">% ... skip this point.</span>
+            <span class="keyword">end</span>
+
+            <span class="comment">% Find distances to each transmitter on this channel, the</span>
+            <span class="comment">% upper channel, and the lower channel (if they exist)</span>
+            distance = latlong_to_km(tx_list(:, lat_idx), tx_list(:, long_idx), lat_coords(j), long_coords(k));
+            <span class="keyword">if</span>(up); distance_up = latlong_to_km(tx_list_up(:, lat_idx), tx_list_up(:, long_idx), lat_coords(j), long_coords(k)); <span class="keyword">end</span>;
+            <span class="keyword">if</span>(down); distance_down = latlong_to_km(tx_list_down(:, lat_idx), tx_list_down(:, long_idx), lat_coords(j), long_coords(k)); <span class="keyword">end</span>;
+
+            <span class="comment">% Check to see if this point receives TV on the current</span>
+            <span class="comment">% channel</span>
+            tv_distances = distance - rp_list;  <span class="comment">% A nonpositive value indicates that rp &gt;= distance -&gt; can get TV</span>
+            <span class="keyword">if</span> (isempty(tv_distances(tv_distances &lt;= 0)))  <span class="comment">% Cannot get TV (there are no nonpositive values)</span>
+                tv_user_mask(i,j,k) = 0;
+            <span class="keyword">end</span>
+
+            <span class="comment">% Check to see if this point is available for CRs based</span>
+            <span class="comment">% purely on cochannel exclusions</span>
+            <span class="comment">% Allowed radius = rn = rn_minus_rp + rp (cochannel rn-rp)</span>
+            <span class="comment">% TODO: If we can receive TV, we definitely can't</span>
+            <span class="comment">% transmit...</span>
+
+            cr_distances = distance - (rn_minus_rp + rp_list);  <span class="comment">% Nonnegative values -&gt; we are far enough away. Negative values -&gt; we are too close to the tower to transmit.</span>
+            <span class="keyword">if</span> (any(cr_distances(cr_distances &lt; 0)))   <span class="comment">% = we have some negative values = we are too close</span>
+                cr_coch_mask(i,j,k) = 0;
+            <span class="keyword">end</span>
+
+
+            <span class="comment">% Check to see if this point is available for CRs based</span>
+            <span class="comment">% purly on adjacent channel exclusions</span>
+            <span class="comment">% Allowed radius = rn = rn_minus_rp_adjc + rp</span>
+            <span class="keyword">if</span> (up) <span class="comment">% If we have an upper channel...</span>
+                cr_distances_up = distance_up - (rn_minus_rp_up + rp_list_up);          <span class="comment">% Any negative values -&gt; we are too close to transmit</span>
+            <span class="keyword">else</span>    <span class="comment">% If not, modify here to simplify upcoming code</span>
+                cr_distances_up = [];
+            <span class="keyword">end</span>
+
+            <span class="keyword">if</span> (down)   <span class="comment">% If we have a lower channel...</span>
+                cr_distances_down = distance_down - (rn_minus_rp_down + rp_list_down);  <span class="comment">% Any negative values -&gt; we are too close to transmit</span>
+            <span class="keyword">else</span>        <span class="comment">% If not, modify here to simplify upcoming code</span>
+                cr_distances_down = [];
+            <span class="keyword">end</span>
+
+            <span class="comment">% Now look at what these distances are...</span>
+            <span class="keyword">if</span> (any(cr_distances_up(cr_distances_up &lt; 0)) || any(cr_distances_down(cr_distances_down &lt; 0)))   <span class="comment">% = we have some negative values = we are too close</span>
+                cr_adjc_mask(i,j,k) = 0;
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+
+
+
+
+<span class="comment">% Save CR version</span>
+cr_fm_label = fm_mask_label;
+cr_fm_label.device_type = <span class="string">'cr'</span>;
+mask = cr_coch_mask &amp; cr_adjc_mask;
+extras.adjacent_channel_mask = cr_adjc_mask;
+extras.cochannel_mask = cr_coch_mask;
+save(save_filename(cr_fm_label), <span class="string">'mask'</span>, <span class="string">'extras'</span>);
+
+
+
+
+<span class="comment">% Save TV version</span>
+tv_fm_label = fm_mask_label;
+tv_fm_label.device_type = <span class="string">'tv'</span>;
+tv_fm_label.char_label = <span class="string">'none'</span>;
+mask = tv_user_mask;
+extras.contents = <span class="string">'none'</span>;   <span class="comment">% Make sure extras exists</span>
+save(save_filename(tv_fm_label), <span class="string">'mask'</span>, <span class="string">'extras'</span>);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Input argument "fm_mask_label" is undefined.
+
+Error in ==&gt; make_fm_mask at 11
+if (get_compute_status(fm_mask_label)==0)
+</pre><p class="footer"><br>
+            Published with MATLAB&reg; 7.8<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+function [] = make_fm_mask(fm_mask_label)
+%   [] = make_fm_mask(fm_mask_label)
+%
+%   Actually makes CR and TV masks at the same time (more efficient/less overhead)
+% Make masks for various fading margins (1 = CR can transmit; 0 = CR may
+% not transmit)
+% 1 = can receive TV, 0 = cannot receive TV
+% Execution time: approx. 5 min per margin
+
+
+if (get_compute_status(fm_mask_label)==0)
+    return;
+end
+
+% device_type = fm_mask_label.device_type;
+map_size = fm_mask_label.map_size;
+m = fm_mask_label.margin_value;
+char_label = fm_mask_label.char_label;
+tx_haat = char_label.height;
+tx_power = char_label.power;
+
+[is_in_us lat_coords long_coords] = get_us_map(map_size, 1);
+chan_list = get_simulation_value('chan_list');
+TNP = get_simulation_value('TNP');
+dB_leak = 50;   % This is how much each channel leaks (in dB) into its adjacent channels
+leak = 1/(10^(dB_leak/10)); % We will multiply the adjacent channel noise by this number
+
+% Load the tower data
+load 'chan_data_extra.mat'
+% Variables within
+% 	amsl_idx	7
+% 	asrn_idx	3
+% 	chan_data	<8071x10 double>
+% 	chan_no_idx	1
+% 	dist_th_idx	9
+% 	erp_idx	8           % kw
+% 	fac_id_idx	2
+% 	fcc_rp_idx	10
+% 	haat_idx	6       % m
+% 	lat_idx	4
+% 	long_idx	5
+
+default_mask = get_us_map(map_size, length(chan_list));
+
+cr_coch_mask = default_mask;
+cr_adjc_mask = default_mask;
+tv_user_mask = default_mask;
+% 
+% % NOTE: Mostly copied code below this point (not refactored)
+% 
+% Find the protection radius for each transmitter with this fade margin
+% Find rn-rp (rn_minus_rp) for each transmitter with this fade margin
+% Inside the rp, TV can be received
+% At (rn_minus_rp + rp) cochannel transmitters cannot operate
+num_tx = length(chan_data);
+prot_radii = zeros(num_tx, 1);
+%     rn_minus_rp = zeros(num_tx);
+for t = 1:num_tx
+    % Note that ERP comes in kW and the function accepts ERP in W
+    prot_radii(t) = get_protection_radius(chan_data(t, erp_idx)*1e3, chan_data(t, chan_no_idx), chan_data(t, haat_idx), m, TNP);
+    %         rn_minus_rp(i) = get_rn_minus_rp(chan_data(i, erp_idx), chan_data(i, chan_no_idx), chan_data(i, haat_idx), m, TNP);
+end
+
+
+% For each channel...
+for i = 1:length(chan_list)
+    display(['   Current channel: ' num2str(chan_list(i))]);
+    
+    % Find rn_minus_rp for cochannel situations
+    rn_minus_rp = get_rn_minus_rp(tx_power/1e3, chan_list(i), tx_haat, m, TNP);
+    
+    tx_indices = chan_data(:, chan_no_idx) == chan_list(i);
+    tx_list = chan_data(tx_indices,:);   % Select only those transmitters on the current channel
+    rp_list = prot_radii(tx_indices);    % Grab their corresponding protection radii
+    %         rn_list = rn_minus_rp(tx_indices);   % ...and the corresponding rn_minus_rp
+    
+    
+    % Do we have adjacent channels?
+    %         up = (i < length(chan_list)) && (abs(get_freq(chan_list(i+1)) - get_freq(chan_list(i))) == 6);
+    %         down = (i > 1) && (abs(get_freq(chan_list(i-1)) - get_freq(chan_list(i))) == 6);
+    up = has_frequency_neighbor(i, 'up');
+    down = has_frequency_neighbor(i, 'down');
+    
+    if (up)
+        tx_indices_up = chan_data(:, chan_no_idx) == chan_list(i+1);
+        tx_list_up = chan_data(tx_indices_up,:);
+        rp_list_up = prot_radii(tx_indices_up);
+        rn_minus_rp_up = get_rn_minus_rp(tx_power*leak/1e3, chan_list(i+1), tx_haat, m, TNP);
+        %             display(['     Adjacent channel: ' num2str(chan_list(i+1))]);
+    end
+    if(down)
+        tx_indices_down = chan_data(:, chan_no_idx) == chan_list(i-1);
+        tx_list_down = chan_data(tx_indices_down,:);
+        rp_list_down = prot_radii(tx_indices_down);
+        rn_minus_rp_down = get_rn_minus_rp(tx_power*leak/1e3, chan_list(i-1), tx_haat, m, TNP);
+        %             display(['     Adjacent channel: ' num2str(chan_list(i-1))]);
+    end
+    
+    
+    % For each point in the US...
+    for j = 1:length(lat_coords)
+        %display(['Current latitude index: ' num2str(j) ' of ' num2str(length(lat_coords))]);
+        for k = 1:length(long_coords)
+            
+            
+            if (is_in_us(j,k) == 0) % If it's outside the US...
+                continue;           % ... skip this point.
+            end
+            
+            % Find distances to each transmitter on this channel, the
+            % upper channel, and the lower channel (if they exist)
+            distance = latlong_to_km(tx_list(:, lat_idx), tx_list(:, long_idx), lat_coords(j), long_coords(k));
+            if(up); distance_up = latlong_to_km(tx_list_up(:, lat_idx), tx_list_up(:, long_idx), lat_coords(j), long_coords(k)); end;
+            if(down); distance_down = latlong_to_km(tx_list_down(:, lat_idx), tx_list_down(:, long_idx), lat_coords(j), long_coords(k)); end;
+            
+            % Check to see if this point receives TV on the current
+            % channel
+            tv_distances = distance - rp_list;  % A nonpositive value indicates that rp >= distance -> can get TV
+            if (isempty(tv_distances(tv_distances <= 0)))  % Cannot get TV (there are no nonpositive values)
+                tv_user_mask(i,j,k) = 0;
+            end
+            
+            % Check to see if this point is available for CRs based
+            % purely on cochannel exclusions
+            % Allowed radius = rn = rn_minus_rp + rp (cochannel rn-rp)
+            % TODO: If we can receive TV, we definitely can't
+            % transmit...
+            
+            cr_distances = distance - (rn_minus_rp + rp_list);  % Nonnegative values -> we are far enough away. Negative values -> we are too close to the tower to transmit.
+            if (any(cr_distances(cr_distances < 0)))   % = we have some negative values = we are too close
+                cr_coch_mask(i,j,k) = 0;
+            end
+            
+            
+            % Check to see if this point is available for CRs based
+            % purly on adjacent channel exclusions
+            % Allowed radius = rn = rn_minus_rp_adjc + rp
+            if (up) % If we have an upper channel...
+                cr_distances_up = distance_up - (rn_minus_rp_up + rp_list_up);          % Any negative values -> we are too close to transmit
+            else    % If not, modify here to simplify upcoming code
+                cr_distances_up = [];
+            end
+            
+            if (down)   % If we have a lower channel...
+                cr_distances_down = distance_down - (rn_minus_rp_down + rp_list_down);  % Any negative values -> we are too close to transmit
+            else        % If not, modify here to simplify upcoming code
+                cr_distances_down = [];
+            end
+            
+            % Now look at what these distances are...
+            if (any(cr_distances_up(cr_distances_up < 0)) || any(cr_distances_down(cr_distances_down < 0)))   % = we have some negative values = we are too close
+                cr_adjc_mask(i,j,k) = 0;
+            end
+            
+            
+        end
+    end
+    
+end
+
+
+
+
+
+% Save CR version
+cr_fm_label = fm_mask_label;
+cr_fm_label.device_type = 'cr';
+mask = cr_coch_mask & cr_adjc_mask;
+extras.adjacent_channel_mask = cr_adjc_mask;
+extras.cochannel_mask = cr_coch_mask;
+save(save_filename(cr_fm_label), 'mask', 'extras');
+
+
+
+
+% Save TV version
+tv_fm_label = fm_mask_label;
+tv_fm_label.device_type = 'tv';
+tv_fm_label.char_label = 'none';
+mask = tv_user_mask;
+extras.contents = 'none';   % Make sure extras exists
+save(save_filename(tv_fm_label), 'mask', 'extras');
+end
+
+
+##### SOURCE END #####
+-->
+   </body>
+</html>
