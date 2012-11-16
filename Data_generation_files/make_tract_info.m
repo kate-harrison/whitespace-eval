@@ -9,6 +9,15 @@ function [] = make_tract_info(year)
 %
 % Please open this file to see additional information (e.g. where to obtain
 % the data.)
+%
+%
+% NOTE: Currently this file works for the US only.
+
+switch(get_simulation_value('region_code'))
+    case 'US',
+    otherwise,
+        error('Unsupported region code.');
+end
 
 
 % These shapefiles (downloaded from
@@ -80,7 +89,7 @@ field.waterarea = ['AWATER' field_num];
 
 
 % This is the directory in which we'll be working
-data_path = ['Population_and_tower_data/Population/' num2str(year)];
+data_path = get_population_data_dir(year);
 
 % This is the file which contains the population data for this year
 pop_filename = [data_path '/Population/pop_data' num2str(year) '.mat'];

@@ -108,7 +108,12 @@ make_map(total_avail, 'title', 'Channels available', ...
 
 clc; clear all; close all;
 
-load('Population_and_tower_data/Tower/2011/chan_data2011.mat');
+tower_data_year = '2011'
+
+% Load the tower data
+[chan_data struct] = get_tower_data(tower_data_year);
+struct_to_vars; % "deal" the fieldnames of 'struct' to local variables
+
 
 plot_shapefile('us');
 

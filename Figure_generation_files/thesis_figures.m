@@ -369,7 +369,7 @@ switch(year)
 end
 
 state_num = num2str(state, '%02d');
-poly_filename = ['Population_and_tower_data/Population/' num2str(year) ...
+poly_filename = [get_population_data_dir(year) ...
     '/Geography/tl_2010_' state_num ...
     '_tract' field_num '/tl_2010_' state_num '_tract' field_num '.shp'];
 
@@ -427,7 +427,7 @@ switch(year)
 end
 
 state_num = num2str(state, '%02d');
-poly_filename = ['Population_and_tower_data/Population/' num2str(year) ...
+poly_filename = [get_population_data_dir(year) ...
     '/Geography/tl_2010_' state_num ...
     '_tract' field_num '/tl_2010_' state_num '_tract' field_num '.shp'];
 
@@ -688,7 +688,7 @@ make_map(total_new_excl, options);
 
 clc; clear all; close all;
 
-load('Population_and_tower_data/Population/2010/tract_info2010.mat');
+load([get_population_data_dir(2010) '/tract_info2010.mat']);
 
 
 areas = zeros(1,length(tract_info));

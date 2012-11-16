@@ -176,7 +176,7 @@ for i = 1:length(chan_list)
 end
 
 % Now we have a list of the powers used across the channel and a map
-% with FCC rp (not +14.4) exclusions only
+% with FCC rp (not rn) exclusions only
 dB_boost = get_simulation_value('dB_leak');
 flat_power3_boost = flat_power3 * 10^(dB_boost/10);    % 40dB boost
 if (any(flat_power3 > flat_power3_boost))
@@ -221,6 +221,7 @@ function [new_power_map old_power_map flat_power_map1 flat_power_map2 beta_map] 
 
 
 chan_list = get_simulation_value('chan_list');
+cochannel_separation_dist = get_simulation_value('cochannel_separation_distance');
 [is_in_us lat_coords long_coords] = get_us_map(map_size, length(chan_list));
 default_mask = is_in_us;
 
@@ -287,9 +288,9 @@ for i = 1:length(chan_list)
             [Y,I] = min(distance);
             
             
-            [flat_idx Y] = find_closest(14.4, r_list(I,:) - rp_list(I));
-            if (abs(Y - 14.4) > 0.01)
-                warning('Did not find exact match for rp+14.4');
+            [flat_idx Y] = find_closest(cochannel_separation_dist, r_list(I,:) - rp_list(I));
+            if (abs(Y - cochannel_separation_dist) > 0.01)
+                warning('Did not find exact match for rp+(coch. sep. dist.)');
             end
             flat_power_map1(i,j,k) = old_power_list(I, flat_idx);
             
@@ -757,7 +758,9 @@ test_rate = log2(1 + cr_signal.*wifi_power ./ noise);
 output_r_array = mean([r_inner; r_outer], 1);
 switch(model_number)
     case {1,2,3,4},     idcs = test_rate < bpsHz;
-    case {5},           idcs = (output_r_array - rp) < 14.4; % zero out the powers within 14.4
+    case {5},           idcs = (output_r_array - rp) < ...
+                            get_simulation_value('cochannel_separation_distance');
+                        % zero out the powers within rn
     otherwise,          error('Unknown model number.');
 end
 old_rate(idcs) = 0;

@@ -43,7 +43,7 @@ field.landarea = ['ALAND' field_num];
 field.waterarea = ['AWATER' field_num];
 
 % This is the directory in which we'll be working
-data_path = ['Population_and_tower_data/Population/' num2str(year)];
+data_path = get_population_data_dir(year);
 
 
 state_num = num2str(state, '%02d');
@@ -70,7 +70,7 @@ for i = 1:80
     figure;
     
     state_num = num2str(i, '%02d');
-    filename = ['Population_and_tower_data/Population/2010/Geography/tl_2010_' ...
+    filename = [get_population_data_dir(2010) '/Geography/tl_2010_' ...
         state_num '_tract10/tl_2010_' state_num '_tract10.shp']
     
     if (exist(filename, 'file')~=2)

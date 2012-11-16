@@ -47,45 +47,9 @@ else
     min_haat = min(height) + 1e-8;
     max_haat = max(height);
     
-    
-    switch(tower_data_year)
-%         case '2008',
-%             load 'chan_data_extra.mat'
-%             % Variables within
-%             % 	amsl_idx	7
-%             % 	asrn_idx	3
-%             % 	chan_data	<8071x10 double>
-%             % 	chan_no_idx	1
-%             % 	dist_th_idx	9
-%             % 	erp_idx	8
-%             % 	fac_id_idx	2
-%             % 	fcc_rp_idx	10
-%             % 	haat_idx	6
-%             % 	lat_idx	4
-%             % 	long_idx	5
-%             
-%             low_idcs = chan_data(:, haat_idx) <= min_haat;
-%             chan_data(low_idcs, haat_idx) = min_haat;
-            
-        case {'2011'},
-            load 'Population_and_tower_data/Tower/2011/chan_data2011.mat'
-            % Variables within
-            %   chan_data	<8708x7 double>
-            % 	chan_no_idx	1
-            % 	lat_idx	2
-            % 	long_idx	3
-            % 	haat_idx	4
-            % 	erp_idx	5
-            % 	dist_th_idx	6
-            % 	fcc_rp_idx	7
-            
-            %         error('No support for 2011 tower data at this time');
-        otherwise,
-            error(['No tower data for year ' tower_data_year]);
-    end
-    
-    
-    
+    % Load the tower data
+    [chan_data struct] = get_tower_data(tower_data_year);
+    struct_to_vars; % "deal" the fieldnames of 'struct' to local variables
     
     %% Pre-allocate arrays
     

@@ -1,9 +1,19 @@
 function [] = read_tower_data(year)
 %   [] = read_tower_data(year)
 %
-%   Parses the .txt file containing the tower data and outputs
-%   chan_data2011.mat
+%   Parses the .txt file containing the tower data and outputs to
+%   [get_simulation_value('data_dir') '/chan_data2011.mat']
+%
+%   NOTE: Currently this file works for the US only.
+%
+%   See also: get_simulation_value
 
+
+switch(get_simulation_value('region_code'))
+    case 'US',
+    otherwise,
+        error('Unsupported region code.');
+end
 
 % Make sure we have data for the specified year
 if (~string_is(year, '2011'))
@@ -11,7 +21,7 @@ if (~string_is(year, '2011'))
 end
 
 %% Process the tower data
-filename = 'Population_and_tower_data/Tower/2011/chan_data2011.mat';
+filename = [get_simulation_value('data_dir') '/chan_data2011.mat'];
 % If we don't need to compute, exit now
 if (get_compute_status(filename) == 0)
     return;

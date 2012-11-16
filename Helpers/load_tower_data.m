@@ -2,18 +2,16 @@ function [chan_data chan_no_idx lat_idx long_idx haat_idx erp_idx fcc_rp_idx dis
 %   [chan_data chan_no_idx lat_idx long_idx haat_idx erp_idx fcc_rp_idx dist_th_idx] 
 %           = load_tower_data(tower_data_year)
 %
+%   This function is deprecated. Use get_tower_data.m instead.
 %
-%
-%   This function is deprecated. Use load_chan_data.m instead.
-%
-%   See also: load_chan_data
+%   See also: get_tower_data
 
 
 warning('Use fuction load_chan_data() instead.');
 
 switch(tower_data_year)
     case '2011',
-        load('Population_and_tower_data/Tower/2011/chan_data2011.mat');
+        load([get_simulation_value('data_dir') '/chan_data2011.mat']);
         % Variables within
         %   chan_data	<8705x7 double>
         % 	chan_no_idx	1

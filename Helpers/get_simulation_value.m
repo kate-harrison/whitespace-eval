@@ -23,6 +23,8 @@ function [varargout] = get_simulation_value(variable_name)
 %   TNP - thermal noise power (noise on a clean channel)
 %   target_TV_SNR - TV SNR reception threshold (dB)
 %   dB_leak - how much each channel leaks (in dB) into its adjacent channels
+%   cochannel_separation_distance - cochannel separation distance (km)
+%   adjacent_channel_separation_distance - adj. channel separation dist. (km)
 %
 % DATA SOURCES
 %   tower_data_year - year the tower data was gathered (options: 2008, 2011)
@@ -33,6 +35,11 @@ function [varargout] = get_simulation_value(variable_name)
 %   heights - heights allowed in our propagation model
 %   distances - distances allowed in our propagation model
 %   fade_margins - values of existing fade margin maps (dB)
+%
+% DIRECTORIES   (does NOT include trailing /)
+%   data_dir - base directory for generated data
+%   population_data_dir - base directory for raw population data
+%   tower_data_dir - base directory for raw tower assignment data
 %
 % MISCELLANEOUS
 %   labels - labels used within this code base
@@ -141,6 +148,26 @@ switch(variable_name)
         % This is how much each channel leaks (in dB) into its adjacent
         % channels
         value = 50; % dB
+        
+    case 'cochannel_separation_distance',
+        % NOTE: when changing the values below, we also need to change some
+        % of the values in 'r_array' in make_jam.m (around line 484).
+        switch(get_simulation_value('region_code'))
+            case 'US',  value = 14.4;   % km
+            case 'AUS', value = 14.4;   % km
+            otherwise,
+                error(['Unsupported region code: ' ...
+                    get_simulation_value('region_code')]);
+        end
+        
+    case 'adjacent_channel_separation_distance',
+        switch(get_simulation_value('region_code'))
+            case 'US',  value = 0.74;   % km
+            case 'AUS', value = 0.74;   % km
+            otherwise,
+                error(['Unsupported region code: ' ...
+                    get_simulation_value('region_code')]);
+        end
 % END PROPAGATION
 
 
@@ -192,6 +219,18 @@ switch(variable_name)
     case 'distances',
         value = [.01 * [1:10] .1 * [2:10] [2:20] [25:5:100] [110:10:200] [225:25:1000]]; % km
 % END DATA RANGES
+
+
+% BEGIN DIRECTORIES     (should NOT include trailing /)
+    case 'data_dir',    % base directory for generated data
+        value = 'Data';
+        
+    case 'population_data_dir', % base directory for population data
+        value = 'Population_and_tower_data/Population';
+        
+    case 'tower_data_dir',  % base directory for raw tower assignment data
+        value = 'Population_and_tower_data/Tower';
+% END DIRECTORIES
 
 
 % BEGIN MISCELLANEOUS

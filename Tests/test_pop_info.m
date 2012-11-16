@@ -3,9 +3,13 @@
 % Can verify some info with
 % http://www.census.gov/geo/www/maps/2010_census_profile_maps/census_profile_2010_main.html
 
-
-
 clc; clear all; close all;
+
+switch(get_simulation_value('region_code'))
+    case 'US',
+    otherwise,
+        error('Unsupported region code.');
+end
 
 year = 2010;
 
@@ -43,7 +47,7 @@ field.landarea = ['ALAND' field_num];
 field.waterarea = ['AWATER' field_num];
 
 % This is the directory in which we'll be working
-data_path = ['Population_and_tower_data/Population/' num2str(year)];
+data_path = get_population_data_dir(year);
 
 
 state_num = num2str(state, '%02d');

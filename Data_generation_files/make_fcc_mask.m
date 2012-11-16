@@ -22,36 +22,8 @@ leak = 1/(10^(dB_leak/10)); % We will multiply the adjacent channel noise by thi
 
 
 % Load the tower data
-switch(tower_data_year)
-    case '2011',
-        load('Population_and_tower_data/Tower/2011/chan_data2011.mat');
-        % Variables within
-        %   chan_data	<8705x7 double>
-        % 	chan_no_idx	1
-        % 	lat_idx	2
-        % 	long_idx	3
-        % 	haat_idx	4
-        % 	erp_idx	5
-        % 	dist_th_idx	6
-        % 	fcc_rp_idx	7
-%     case '2008',
-%         load 'chan_data_extra.mat'
-%         % Variables within
-%         % 	amsl_idx	7
-%         % 	asrn_idx	3
-%         % 	chan_data	<8071x10 double>
-%         % 	chan_no_idx	1
-%         % 	dist_th_idx	9
-%         % 	erp_idx	8           % kw
-%         % 	fac_id_idx	2
-%         % 	fcc_rp_idx	10
-%         % 	haat_idx	6       % m
-%         % 	lat_idx	4
-%         % 	long_idx	5
-    otherwise,
-        error('Bad tower data year');
-end
-
+[chan_data struct] = get_tower_data(tower_data_year);
+struct_to_vars; % "deal" the fieldnames of 'struct' to local variables
 
 default_mask = get_us_map(map_size, length(chan_list));
 
@@ -62,8 +34,8 @@ switch(device_type)
         % How far beyond the FCC protection radius we'll extend our protection
         switch(device_type)
             case 'cr',            % fixed
-                r_co_ext = 14.4;    % km
-                r_adj_ext = 0.74;   % km
+                r_co_ext = get_simulation_value('cochannel_separation_distance');    % km
+                r_adj_ext = get_simulation_value('adjacent_channel_separation_distance');   % km
                 
                 start_channel_idx = get_channel_index(2);
 %             case 'cr_portable',   % portable
@@ -117,7 +89,7 @@ switch(device_type)
                     
                     % Check protection radii for this channel
                     distance = latlong_to_km(tx_list(:, lat_idx), tx_list(:, long_idx), lat_coords(j), long_coords(k));
-                    distance = distance - tx_list(:, fcc_rp_idx)-r_co_ext;  % Add 14.4 km to each protection radius
+                    distance = distance - tx_list(:, fcc_rp_idx)-r_co_ext;  % Add the cochannel separation distance to each protection radius
                     if (~isempty(distance(distance < 0)))     % If there are any negative entries, we must be within the protection radius for some tower
                         cochannel_mask(i,j,k) = 0;
                     end
@@ -126,7 +98,7 @@ switch(device_type)
                     % Check lower adjacent channel
                     if (down)
                         distance = latlong_to_km(tx_list_down(:, lat_idx), tx_list_down(:, long_idx), lat_coords(j), long_coords(k));
-                        distance = distance - tx_list_down(:, fcc_rp_idx)-r_adj_ext;  % Add 0.74 km to each protection radius
+                        distance = distance - tx_list_down(:, fcc_rp_idx)-r_adj_ext;  % Add the adj. channel separation distance to each protection radius
                         if (~isempty(distance(distance < 0)))     % If there are any negative entries, we must be within the protection radius for some tower
                             adjacent_channel_mask(i,j,k) = 0;
                         end
@@ -207,8 +179,6 @@ switch(device_type)
         error(['Unrecognized device type: ' device_type]);
 
 end
-
-
 
 save(save_filename(fcc_mask_label), 'mask', 'extras');
 

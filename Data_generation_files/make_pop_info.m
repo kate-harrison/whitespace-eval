@@ -3,13 +3,20 @@ function [] = make_pop_info(year)
 %
 % Reads in the population information and turns it into the format expected
 % by make_tract_info.m. Expects population data to be stored in
-%   Population_and_tower_data/Population/[year]/Population/all_pops.csv
+%   [get_population_data_dir(year) '/Population/popbytract.csv']
 %
 %   year = year for census data (valid: 2000, 2010)
 %
-% Please see Population_and_tower_data/Population/thankyou.txt for
-% information on obtaining this data for yourself.
+% Please see [get_simulation_value('population_data_dir') '/thankyou.txt]
+% for information on obtaining this data for yourself.
+%
+% NOTE: Currently this file works for the US only.
 
+switch(get_simulation_value('region_code'))
+    case 'US',
+    otherwise,
+        error('Unsupported region code.');
+end
 
 
 %% Old documentation for the ZCTA version -- we're using census tracts now
@@ -62,7 +69,7 @@ regenerate = get_simulation_value('recompute');
 
 
 % This is the directory in which we'll be working
-data_path = ['Population_and_tower_data/Population/' num2str(year)];
+data_path = get_population_data_dir(year);
 
 % This is the file we need to read
 raw_filename = [data_path '/Population/popbytract' num2str(year) '.csv'];
