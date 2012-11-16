@@ -2,7 +2,10 @@ function [] = make_us_map(map_size)
 %   [] = make_us_map(map_size)
 %
 % Creates a matrix of binary values to answer the question "is this point
-% in the US?"
+% in the region?" The region, among other parameters, are set in
+% Helpers/get_simulation_value.m
+%
+% See also: get_simulation_value.m
 
 validate_flags('', 'map_size', map_size);
 filename = ['Data/in_us' map_size '.mat'];
@@ -13,17 +16,11 @@ if (get_compute_status(filename) == 0)
 end
 
 
+%% Set the bounds for the rectangle we'd like to create
+[min_lat max_lat] = get_simulation_value('minmax_lat');
+[min_long max_long] = get_simulation_value('minmax_long');
 
-% Set the bounds for the rectangle we'd like to create
-max_lat = 50;
-min_lat = 24;
-max_long = -66;
-min_long = -126;
-
-
-split = regexp(map_size, 'x', 'split');
-num_lat_div = str2double(split{1});
-num_long_div = str2double(split{2});
+[num_lat_div num_long_div] = get_map_dims_from_string(map_size);
 lat_coords = linspace(min_lat, max_lat, num_lat_div);
 long_coords = linspace(min_long, max_long, num_long_div);
 
@@ -36,19 +33,24 @@ is_in_us = zeros(length(lat_coords), length(long_coords));
 map_points = [longs_vec, lats_vec];
 
 
-%% Make the US polygon
-[S,A] = shaperead('usastatehi.shp', 'usegeocoords', true);
+%% Retrieve the region's polygon
+[S,A] = get_simulation_value('region_shapefile');
 
-% longs = [];
-% lats = [];
+
+%% Determine which points are inside the polygon
+region_code = get_simulation_value('region_code');
 
 in_vec = zeros(size(lats_vec));
 
 for i = 1:length(S)
     
-        % Omit Alaska and Hawaii
-    if (i == 2 || i == 11)
-        continue;
+    switch(region_code)
+        case 'US',
+            % Omit Alaska and Hawaii
+            if (i == 2 || i == 11)
+                continue;
+            end
+        otherwise,
     end
 
 
@@ -58,7 +60,6 @@ for i = 1:length(S)
         idcs2 = idcs(j)+1:idcs(j+1)-1;
         plot_lat = S(i).Lat(idcs2);
         plot_long = S(i).Lon(idcs2);
-%         patch(plot_long, plot_lat, color);
         poly_points = [plot_long; plot_lat]';
         [in] = inpoly(map_points, poly_points);
 
@@ -67,14 +68,10 @@ for i = 1:length(S)
 end
 
 
-
-
 %% Reshape the data
-
 is_in_us = reshape(in_vec, size(is_in_us));
 
 
-
-%% Save
+%% Save the data
 save(filename, 'is_in_us', 'num_lat_div', 'num_long_div', ...
     'max_lat', 'min_lat', 'max_long', 'min_long', 'long_coords', 'lat_coords');
