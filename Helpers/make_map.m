@@ -90,7 +90,7 @@ options = struct('map_type', 'linear', ...
              );
                  
  
-map_size = determine_map_size(size(data));
+map_size = get_map_size_string(size(data));
 
 %% If the options are input as a structure...
 if (nargin >= 2 && isstruct(varargin{2}))

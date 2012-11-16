@@ -15,7 +15,7 @@ end
 
 %% Create polygon information
 display('Creating polygon information');
-map_size = determine_map_size(size(data_map));
+map_size = get_map_size_string(size(data_map));
 [is_in_us, lat_coords, long_coords] = get_us_map(map_size);
 
 width = long_coords(2) - long_coords(1);

@@ -28,7 +28,7 @@ else
     colorbar_label = varargin{1};
 end
 
-map_size = determine_map_size(size(data));
+map_size = get_map_size_string(size(data));
 
 is_in_us = get_us_map(map_size, 1);
 data(~is_in_us) = inf;

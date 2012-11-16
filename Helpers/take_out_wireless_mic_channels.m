@@ -26,7 +26,7 @@ higher_idx = get_channel_index(38);
 mask([get_channel_index(3), get_channel_index(4)], :, :) = 0;
 
 
-map_size = determine_map_size(size(mask));
+map_size = get_map_size_string(size(mask));
 [is_in_us lat_coords long_coords] = get_us_map(map_size);
 
 
