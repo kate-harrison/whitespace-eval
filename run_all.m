@@ -90,7 +90,8 @@ get_tower_nearby_pops(pop_year, tower_year);
 status_msg('Making miscellaneous files');
 make_colors();
 make_plot_parameters();
-make_state_outlines(map_size);
+region_outline_label = generate_label('region_outline', map_size);
+make_region_outline(region_outline_label);
 
 %% Make masks (FM and FCC)
 status_msg('Making FCC and fade-margin masks');

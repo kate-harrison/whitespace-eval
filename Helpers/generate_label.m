@@ -34,6 +34,7 @@ function [label] = generate_label(varargin)
 %   PL_SQUARES: (type, width, p, pop_type, map_size, char_label)
 %           - type = {'local', 'long_range'}
 %           - width: >= 0
+%   REGION_OUTLINE: (map_size)
 %
 %
 %   Common inputs:
@@ -96,6 +97,9 @@ switch(varargin{1})
     case 'pl_squares', 
         num_needed_args = 6; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_pl_squares_label(varargin{2:end});
+    case 'region_outline',
+        num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
+        label = generate_region_outline_label(varargin{2:end});
         
     otherwise,
         error(['Unrecognized label type: ''' varargin{1} '''. Acceptable values are: ' accepted_values]);
@@ -380,6 +384,16 @@ pl_squares_label.char_label = char_label;
 
 end
 
+
+% -------------------------------------------------------------------------
+%     REGION_OUTLINE
+% -------------------------------------------------------------------------
+function [region_outline_label] = generate_region_outline_label( map_size )
+%   [region_outline_label] = generate_region_outline_label( map_size )
+
+region_outline_label.map_size = map_size;
+
+end
 
 
 

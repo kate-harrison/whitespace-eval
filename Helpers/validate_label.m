@@ -28,6 +28,8 @@ switch(label.label_type)
         validate_noise_label(label);
     case 'pl_squares',
         validate_pl_squares_label(label);
+    case 'region_outline',
+        validate_region_outline_label(label);
     case 'none',
     otherwise,
         accepted_values = get_simulation_value('labels');
@@ -185,5 +187,16 @@ validate_flags('pl_squares', 'p', pl_squares_label.p);
 validate_flags('pl_squares', 'population_type', pl_squares_label.population_type);
 validate_flags('pl_squares', 'map_size', pl_squares_label.map_size);
 validate_label(pl_squares_label.char_label);
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_OUTLINE
+% -------------------------------------------------------------------------
+function [] = validate_region_outline_label(region_outline_label)
+%   [] = validate_region_outline_label(region_outline_label)
+
+validate_flags('region_outline', 'map_size', region_outline_label.map_size);
 
 end

@@ -28,6 +28,8 @@ switch(label.label_type)
         filename = generate_noise_filename(label);
     case 'pl_squares',
         filename = generate_pl_squares_filename(label);
+    case 'region_outline',
+        filename = generate_region_outline_filename(label);
     case 'none',
         filename = 'none';
         
@@ -231,6 +233,15 @@ filename = ['PL_SQUARES type=' pl_squares_label.type ' width=' ...
 end
 
 
+% -------------------------------------------------------------------------
+%     REGION_OUTLINE
+% -------------------------------------------------------------------------
+function [filename] = generate_region_outline_filename( region_outline_label )
+%   [filename] = generate_region_outline_filename( region_outline_label )
+
+filename = ['REGION_OUTLINE map_size=' region_outline_label.map_size];
+
+end
 
 
 

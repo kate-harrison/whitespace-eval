@@ -23,6 +23,8 @@ switch(label.label_type)
         make_noise(label);
     case 'pl_squares',
         make_pl_squares(label);
+    case 'region_outline',
+        make_region_outline(label);
 
     otherwise,
         error(['Unrecognized label type: ''' label.label_type '''. Acceptable values are: ' accepted_values]);

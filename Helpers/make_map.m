@@ -233,8 +233,9 @@ switch(options.state_outlines)
         set(gcf, 'color', 'white');
         set(F,'InvertHardcopy','off');
         
-        % Plot the state outlines
-        load(['state_outlines' map_size '.mat'], 'lats', 'longs');
+        % Plot the region outlines
+        region_outline_label = generate_label('region_outline', map_size);
+        [lats longs] = load_by_label(region_outline_label);
         patch(longs, lats, 'w', 'linewidth', 1, 'facecolor', 'none', ...
             'edgecolor', options.state_outline_color);
     case 'off', % do nothing

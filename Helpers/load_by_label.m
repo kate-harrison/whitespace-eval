@@ -37,6 +37,8 @@ function [varargout] = load_by_label(label)
 %       * long-range: [pl_squares] (pl_squares has fields distances,
 %                       fractions, idx_x, idx_y
 %
+%   REGION_OUTLINE: [lats longs]
+%
 %
 % Note: If the data doesn't exist, the function will return an error.
 %
@@ -76,6 +78,8 @@ switch(label.label_type)
         [varargout] = load_noise_by_label(label);
     case 'pl_squares',
         [varargout] = load_pl_squares_by_label(label);
+    case 'region_outline',
+        [varargout] = load_region_outline_by_label(label);
     otherwise,
         error(['Unrecognized label: ' label]);
 end
@@ -444,3 +448,22 @@ switch(pl_squares_label.type)
 end
 
 end
+
+
+% -------------------------------------------------------------------------
+%     REGION_OUTLINE
+% -------------------------------------------------------------------------
+function [out] = load_region_outline_by_label(region_outline_label)
+% [lats longs] = load_region_outline_by_label(region_outline_label)
+
+if (~data_exists(region_outline_label))
+    make_data(region_outline_label);
+end
+
+region_outline_filename = generate_filename(region_outline_label);
+file = load([region_outline_filename '.mat']);
+
+out = {file.lats file.longs};
+
+end
+

@@ -1,12 +1,13 @@
-function [] = make_state_outlines(map_size)
-%   [] = make_state_outlines(map_size)
+function [] = make_region_outline(region_outline_label)
+%   [] = make_region_outline(region_outline_label)
 %
 %   Makes polygons which are outlines of the US states for use as an
 %   overlay in make_map().
 
+error_if_region_unsupported('US');
 
-validate_flags('', 'map_size', map_size);
-filename = ['Data/state_outlines' map_size '.mat'];
+map_size = region_outline_label.map_size;
+filename = save_filename(region_outline_label);
 
 % If we don't need to compute, exit now
 if (get_compute_status(filename) == 0)
@@ -52,7 +53,6 @@ max_long = max(long_coords);
 
 lats = change_range(state_lats, min_lat, max_lat, 1, length(lat_coords));
 longs = change_range(state_longs, min_long, max_long, 1, length(long_coords));
-
 
 
 save(filename, 'lats', 'longs');
