@@ -240,6 +240,20 @@ switch(file_type)
 
         end
         
+    case 'population',
+        switch(flag_type)
+            case 'type',
+                switch(flag_value)
+                    case {'raw', 'density'},
+                        % nothing
+                    otherwise,
+                        error(['Invalid population data type: ' ...
+                            flag_value ' (valid values: raw, density)']);
+                end
+            otherwise,
+                error(['Invalid flag type.']);
+        end
+        
     case 'hex',
         switch(flag_type)
             case 'type'

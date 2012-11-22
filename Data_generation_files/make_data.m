@@ -23,6 +23,8 @@ switch(label.label_type)
         make_noise(label);
     case 'pl_squares',
         make_pl_squares(label);
+    case 'population',
+        make_population(label);
     case 'region_outline',
         make_region_outline(label);
 

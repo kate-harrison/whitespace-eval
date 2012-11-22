@@ -1,15 +1,5 @@
-function [] = make_population_map(year, varargin)
-%   function [] = make_population_map(year, [map_size])
-%
-%   year = census year for the data
-%       Accepted values: 2000, 2010
-%   map_size = resolution for resulting data
-%       Accepted values: '200x300', '201x301', '400x600'
-%       This input is optional and draws its default value from
-%           get_simulation_value.m
-%   Please note that get_simulation_value.m is the authority on accepted
-%   values for the above inputs.
-%
+function [] = make_population(population_label)
+%   function [] = make_population(population_label)
 %
 % Makes a file that lists the population density of the US at each point.
 %
@@ -18,9 +8,14 @@ function [] = make_population_map(year, varargin)
 %
 % Run time: approx. 2.5 hours for 200x300 map
 %           approx. 9.2 hours for 400x600 map
+%
+% See also: generate_label
+
+error_if_region_unsupported('US');
 
 
-
+% % The statement below is no longer true but you could cleverly adapt them
+% % with a little effort.
 % If you cannot devote the full 2.5 hours, uncomment the three lines below
 % and comment the first line of the file to run it as a script. 
 
@@ -30,14 +25,9 @@ function [] = make_population_map(year, varargin)
 
 
 %% Load existing data
-if (isempty(varargin))
-    map_size = get_simulation_value('map_size');
-else
-    map_size = varargin{1};
-end
+map_size = population_label.map_size;
 
-validate_flags('', 'map_size', map_size);
-filename = ['Data/population_map ' map_size ' year=' num2str(year) '.mat'];
+filename = save_filename(population_label);
 
 % If we don't need to compute, exit now
 if (get_compute_status(filename) == 0)

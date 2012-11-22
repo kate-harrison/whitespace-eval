@@ -3,7 +3,7 @@ function [] = make_tract_info(year)
 %
 % Reads in shapefiles containing polygon data for census tracts and
 % combines it with the population data created by make_pop_info.m to make
-% tract_info.mat which will be used in make_population_maps.m.
+% tract_info.mat which will be used in make_population.m.
 %
 %   year = year for census data (valid: 2000, 2010)
 %

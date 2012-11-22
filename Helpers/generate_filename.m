@@ -28,6 +28,8 @@ switch(label.label_type)
         filename = generate_noise_filename(label);
     case 'pl_squares',
         filename = generate_pl_squares_filename(label);
+    case 'population',
+        filename = generate_population_filename(label);
     case 'region_outline',
         filename = generate_region_outline_filename(label);
     case 'none',
@@ -231,6 +233,21 @@ filename = ['PL_SQUARES type=' pl_squares_label.type ' width=' ...
     generate_filename(pl_squares_label.char_label) ')'];
 
 end
+
+
+% -------------------------------------------------------------------------
+%     POPULATION
+% -------------------------------------------------------------------------
+function [filename] = generate_population_filename( population_label )
+%   [filename] = generate_population_filename( population_label )
+
+[type year] = split_flag(population_label.population_type);
+
+filename = ['POPULATION year=' num2str(year) ...
+    ' map_size=' population_label.map_size];
+
+end
+
 
 
 % -------------------------------------------------------------------------

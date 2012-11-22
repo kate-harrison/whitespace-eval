@@ -28,6 +28,8 @@ switch(label.label_type)
         validate_noise_label(label);
     case 'pl_squares',
         validate_pl_squares_label(label);
+    case 'population',
+        validate_population_label(label);
     case 'region_outline',
         validate_region_outline_label(label);
     case 'none',
@@ -187,6 +189,19 @@ validate_flags('pl_squares', 'p', pl_squares_label.p);
 validate_flags('pl_squares', 'population_type', pl_squares_label.population_type);
 validate_flags('pl_squares', 'map_size', pl_squares_label.map_size);
 validate_label(pl_squares_label.char_label);
+
+end
+
+
+% -------------------------------------------------------------------------
+%     POPULATION
+% -------------------------------------------------------------------------
+function [] = validate_population_label(population_label)
+%   [] = validate_population_label(population_label)
+
+validate_flags('population', 'type', population_label.type);
+validate_flags('population', 'population_type', population_label.population_type);
+validate_flags('population', 'map_size', population_label.map_size);
 
 end
 

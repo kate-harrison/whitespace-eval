@@ -31,6 +31,8 @@ function [label] = generate_label(varargin)
 %   NOISE: (cochannel, map_size, channels, leakage_type)
 %           - cochannel = {'yes', 'no'}
 %           - leakage_type = {'none', 'both', 'up', 'down'}
+%   POPULATION: (type, population_type, map_size)
+%           - type = {'raw', 'density'}
 %   PL_SQUARES: (type, width, p, pop_type, map_size, char_label)
 %           - type = {'local', 'long_range'}
 %           - width: >= 0
@@ -94,6 +96,9 @@ switch(varargin{1})
     case 'noise',
         num_needed_args = 4; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_noise_label(varargin{2:end});
+    case 'population',
+        num_needed_args = 3; verify_num_args(num_needed_args, nargin, varargin{1});
+        label = generate_population_label(varargin{2:end});
     case 'pl_squares', 
         num_needed_args = 6; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_pl_squares_label(varargin{2:end});
@@ -381,6 +386,18 @@ pl_squares_label.population_type = generate_population_type(pop_type);
 pl_squares_label.map_size = map_size;
 char_label.power = 0;
 pl_squares_label.char_label = char_label;
+
+end
+
+% -------------------------------------------------------------------------
+%     POPULATION
+% -------------------------------------------------------------------------
+function [population_label] = generate_population_label( type, population_type, map_size )
+%   [population_label] = generate_population_label( type, population_type, map_size )
+
+population_label.type = type;
+population_label.population_type = generate_population_type(population_type);
+population_label.map_size = map_size;
 
 end
 

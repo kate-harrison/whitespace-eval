@@ -18,7 +18,6 @@ num_inputs = length(varargin);
 % Parse varargin and set defaults
 if (num_inputs < 1)
     population_type = get_simulation_value('pop_data_type');
-    soft_warning(['Assuming population type ' population_type]);
 else
     population_type = varargin{1};
 end
@@ -42,30 +41,8 @@ if (num_inputs >= 3)
     warning('Only the first three inputs to this function are used.');
 end
 
-
-file = load_population_data(map_size, year);
-
-
-switch(population_type)
-    case 'real',
-        population = file.population;
-        
-    case 'uniform',
-        is_in_us = get_us_map(map_size);
-        total_population = sum(sum(file.population));
-        num_pixels = sum(sum(is_in_us));
-        people_per_pixel = total_population/num_pixels;
-        
-        population = is_in_us * people_per_pixel;
-        
-    case {'min', 'max'},
-        us_area = get_us_area(map_size);
-        pop_density = eval(['file.' population_type '_pop_density']);
-        population = us_area .* pop_density;
-        
-    otherwise
-        error(['Invalid population type: ' population_type]);
-end
+population_label = generate_label('population', 'raw', population_type, map_size);
+population = load_by_label(population_label);
 
 population = shiftdim(repmat(population, [1 1 num_layers]),2);
 

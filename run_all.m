@@ -45,7 +45,7 @@ pop_year = get_simulation_value('pop_data_year');
 tower_year = get_simulation_value('tower_data_year');
 tv_channels = ['tv-' tower_year];
 cr_channels = ['cr-' tower_year];
-population_type = ['real-' num2str(pop_year)];
+population_type = combine_flag('real', pop_year);
 
 
 %% These are the different characteristics to evaluate
@@ -83,7 +83,8 @@ read_tower_data(tower_year);
 status_msg('Making population data');
 make_pop_info(pop_year);
 make_tract_info(pop_year);
-make_population_map(pop_year, map_size);
+population_label = generate_label('population', 'raw', population_type, map_size);
+make_population(population_label);
 get_tower_nearby_pops(pop_year, tower_year);
 
 %% Miscellaneous

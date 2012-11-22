@@ -37,6 +37,8 @@ function [varargout] = load_by_label(label)
 %       * long-range: [pl_squares] (pl_squares has fields distances,
 %                       fractions, idx_x, idx_y
 %
+%   POPULATION:     [population_map]
+%
 %   REGION_OUTLINE: [lats longs]
 %
 %
@@ -78,6 +80,8 @@ switch(label.label_type)
         [varargout] = load_noise_by_label(label);
     case 'pl_squares',
         [varargout] = load_pl_squares_by_label(label);
+    case 'population',
+        [varargout] = load_population_by_label(label);
     case 'region_outline',
         [varargout] = load_region_outline_by_label(label);
     otherwise,
@@ -445,6 +449,72 @@ switch(pl_squares_label.type)
     case 'long_range',
         out = {file.pl_squares};
         % also available: chan_list, lat_coords, long_coords, pl_squares_label
+end
+
+end
+
+
+% -------------------------------------------------------------------------
+%     POPULATION
+% -------------------------------------------------------------------------
+function [out] = load_population_by_label(population_label)
+% [population_map] = load_population_by_label(population_label)
+
+if (~data_exists(population_label))
+    make_data(population_label);
+end
+
+[population_type population_year] = split_flag(population_label.population_type);
+filename = generate_filename(population_label);
+file = load(filename);
+
+switch(population_label.type)
+    case 'raw',
+        switch(population_type)
+            case 'real',
+                population = file.population;
+
+            case 'uniform',
+                is_in_us = get_us_map(map_size);
+                total_population = sum(sum(file.population));
+                num_pixels = sum(sum(is_in_us));
+                people_per_pixel = total_population/num_pixels;
+
+                population = is_in_us * people_per_pixel;
+
+            case {'min', 'max'},
+                us_area = get_us_area(map_size);
+                pop_density = eval(['file.' population_type '_pop_density']);
+                population = us_area .* pop_density;
+
+            otherwise
+                error(['Invalid population type: ' population_type]);
+        end
+        
+        out = {population};
+        
+    case 'density',
+        switch(population_type)
+            case 'real',
+                pop_density = file.pop_density;
+
+            case 'uniform',
+                is_in_us = get_us_map(map_size, 1);
+                average_pop_density = mean(mean(file.pop_density(is_in_us)));
+                pop_density = is_in_us * average_pop_density;
+
+            case {'min', 'max'},
+                us_area = get_us_area(map_size);
+                pop_density = eval(['file.' population_type '_pop_density']);
+
+            otherwise
+                error(['Invalid population type: ' population_type]);
+        end
+        
+        out = {pop_density};
+        
+    otherwise,
+        error(['Unexpected population type: ' population_label.type]);
 end
 
 end

@@ -7,6 +7,8 @@ function [type year] = split_flag(flag)
 %
 %   Note that year is output as a string to allow for differentiation
 %   between two datasets from the same year (e.g. 2011a and 2011b).
+%
+%   See also: combine_flag
 
 
 split = regexpi(flag, '-', 'split');
