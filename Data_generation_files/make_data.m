@@ -25,6 +25,10 @@ switch(label.label_type)
         make_pl_squares(label);
     case 'population',
         make_population(label);
+    case 'region_areas',
+        make_region_areas(label);
+    case 'region_mask',
+        make_region_mask(label);
     case 'region_outline',
         make_region_outline(label);
 

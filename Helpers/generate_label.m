@@ -36,6 +36,9 @@ function [label] = generate_label(varargin)
 %   PL_SQUARES: (type, width, p, pop_type, map_size, char_label)
 %           - type = {'local', 'long_range'}
 %           - width: >= 0
+%   REGION_AREAS: (map_size, type)
+%           - type = {'masked', 'full'} (uses 'masked' if none specified)
+%   REGION_MASK: (map_size)
 %   REGION_OUTLINE: (map_size)
 %
 %
@@ -102,6 +105,12 @@ switch(varargin{1})
     case 'pl_squares', 
         num_needed_args = 6; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_pl_squares_label(varargin{2:end});
+    case 'region_areas',
+        num_needed_args = [1 2]; verify_num_args(num_needed_args, nargin, varargin{1});
+        label = generate_region_areas_label(varargin{2:end});
+    case 'region_mask',
+        num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
+        label = generate_region_mask_label(varargin{2:end});
     case 'region_outline',
         num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_region_outline_label(varargin{2:end});
@@ -119,10 +128,27 @@ end
 
 function [] = verify_num_args(num_needed, num_received, label_type)
 
-if (num_needed ~= num_received - 1)
-    error(['Insufficient number of arguments. Supplied ' ...
-        num2str(num_received-1) ' and needed ' num2str(num_needed) ...
-        ' for label type ' upper(label_type) '.']);
+% First argument doesn't count since it's the label type
+num_received = num_received - 1;
+
+switch(length(num_needed))
+    case 1,     % fixed number
+        if (num_needed ~= num_received)
+            error(['Insufficient number of arguments. Supplied ' ...
+                num2str(num_received) ' and needed ' num2str(num_needed) ...
+                ' for label type ' upper(label_type) '.']);
+        end
+        
+    case 2,     % range
+        if (num_received < num_needed(1) || num_received > num_needed(2))
+            error(['Incorrect number of arguments: Supplied ' ...
+                num2str(num_received) ' and needed between ' ...
+                num2str(num_needed(1)) ' and ' num2str(num_needed(2)) ...
+                ' for label type ' upper(label_type) '.']);
+        end
+        
+    otherwise,
+        error('Unexpected case.');
 end
 
 end
@@ -398,6 +424,34 @@ function [population_label] = generate_population_label( type, population_type, 
 population_label.type = type;
 population_label.population_type = generate_population_type(population_type);
 population_label.map_size = map_size;
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_AREAS
+% -------------------------------------------------------------------------
+function [region_areas_label] = generate_region_areas_label( map_size, varargin )
+%   [region_areas_label] = generate_region_areas_label( map_size, [type] )
+
+region_areas_label.map_size = map_size;
+
+if nargin > 1
+    region_areas_label.type = varargin{1};
+else
+    region_areas_label.type = 'masked';
+end
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_MASK
+% -------------------------------------------------------------------------
+function [region_mask_label] = generate_region_mask_label( map_size )
+%   [region_mask_label] = generate_region_mask_label( map_size )
+
+region_mask_label.map_size = map_size;
 
 end
 

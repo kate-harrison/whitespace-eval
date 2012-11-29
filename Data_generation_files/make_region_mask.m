@@ -1,5 +1,5 @@
-function [] = make_us_map(map_size)
-%   [] = make_us_map(map_size)
+function [] = make_region_mask(region_mask_label)
+%   [] = make_region_mask(region_mask_label)
 %
 % Creates a matrix of binary values to answer the question "is this point
 % in the region?" The region, among other parameters, are set in
@@ -7,8 +7,26 @@ function [] = make_us_map(map_size)
 %
 % See also: get_simulation_value.m
 
-validate_flags('', 'map_size', map_size);
-filename = ['Data/in_us' map_size '.mat'];
+error_if_region_unsupported('US');
+
+switch(get_simulation_value('region_code'))
+    case 'US',
+        make_us_mask(region_mask_label);
+    otherwise,
+        error('Unsupported region code.');
+end
+
+end
+
+
+
+
+function [] = make_us_mask(region_mask_label)
+
+
+map_size = region_mask_label.map_size;
+
+filename = generate_filename(region_mask_label);
 
 % If we don't need to compute, exit now
 if (get_compute_status(filename) == 0)
@@ -73,5 +91,8 @@ is_in_us = reshape(in_vec, size(is_in_us));
 
 
 %% Save the data
-save(filename, 'is_in_us', 'num_lat_div', 'num_long_div', ...
+save(save_filename(region_mask_label), 'is_in_us', 'num_lat_div', 'num_long_div', ...
     'max_lat', 'min_lat', 'max_long', 'min_long', 'long_coords', 'lat_coords');
+
+
+end

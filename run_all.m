@@ -72,8 +72,10 @@ jam_taxes = .5;
 
 %% Make descretized US map and area
 status_msg('Making US maps');
-make_us_map(map_size);
-make_us_area(map_size);
+region_mask_label = generate_label('region_mask', map_size);
+make_data(region_mask_label);
+region_areas_label = generate_label('region_areas', map_size);
+make_data(region_areas_label);
 
 %% Read and process the TV tower data
 status_msg('Reading tower data');

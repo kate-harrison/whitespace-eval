@@ -30,6 +30,10 @@ switch(label.label_type)
         filename = generate_pl_squares_filename(label);
     case 'population',
         filename = generate_population_filename(label);
+    case 'region_areas',
+        filename = generate_region_areas_filename(label);
+    case 'region_mask',
+        filename = generate_region_mask_filename(label);
     case 'region_outline',
         filename = generate_region_outline_filename(label);
     case 'none',
@@ -248,6 +252,28 @@ filename = ['POPULATION year=' num2str(year) ...
 
 end
 
+
+% -------------------------------------------------------------------------
+%     REGION_AREAS
+% -------------------------------------------------------------------------
+function [filename] = generate_region_areas_filename( region_areas_label )
+%   [filename] = generate_region_areas_filename( region_areas_label )
+
+filename = ['REGION_AREAS map_size=' region_areas_label.map_size ...
+    ' type=' region_areas_label.type];
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_MASK
+% -------------------------------------------------------------------------
+function [filename] = generate_region_mask_filename( region_mask_label )
+%   [filename] = generate_region_mask_filename( region_mask_label )
+
+filename = ['REGION_MASK map_size=' region_mask_label.map_size];
+
+end
 
 
 % -------------------------------------------------------------------------

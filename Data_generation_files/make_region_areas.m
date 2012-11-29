@@ -1,20 +1,42 @@
-function [] = make_us_area(map_size)
-%   [] = make_us_area(map_size)
+function [] = make_region_areas(region_areas_label)
+%   [] = make_region_areas(region_areas_label)
 %
 % Finds the area represented by each point in the US
 % Assume that it extends lat_div_size/2 east-west
 % Assume that it extends long_div_size/2 north-south
 
 
-validate_flags('', 'map_size', map_size);
-filename = ['Data/us_area' map_size '.mat'];
+error_if_region_unsupported('US');
 
-% If we don't need to compute, exit now
-if (get_compute_status(filename) == 0)
-    return;
+masked_label = region_areas_label;
+masked_label.type = 'masked';
+validate_label(masked_label);
+full_label = region_areas_label;
+full_label.type = 'full';
+validate_label(full_label);
+
+
+switch(get_simulation_value('region_code'))
+    case 'US',
+        make_us_area(masked_label, full_label);
+    otherwise,
+        error('Unsupported region code.');
+end
+
 end
 
 
+
+
+function [] = make_us_area(masked_label, full_label)
+
+map_size = masked_label.map_size;
+masked_filename = generate_filename(masked_label);
+
+% If we don't need to compute, exit now
+if (get_compute_status(masked_filename) == 0)
+    return;
+end
 
 [is_in_us lat_coords long_coords] = get_us_map(map_size, 1);
 
@@ -28,12 +50,7 @@ long_div_size = long_coords(2) - long_coords(1);
 
 % For each point in the US...
 for i = 1:length(lat_coords)
-    for j = 1:length(long_coords)
-        
-%         if (~is_in_us(i,j))
-%             continue;
-%         end
-        
+    for j = 1:length(long_coords)        
         % Calculate its area by pinpointing each corner of the trapezoid it
         % represents
         % Assume that it extends lat_div_size/2 east-west
@@ -62,12 +79,9 @@ for i = 1:length(lat_coords)
     end
 end
 
-% figure; imagesc(us_area); axis xy; colorbar;
-
-save(['Data/us_area_full_' map_size '.mat'], 'us_area', 'lat_coords', 'long_coords');
+save(save_filename(full_label), 'us_area', 'lat_coords', 'long_coords');
 
 us_area = us_area .* is_in_us;  % zero outside the US
-% figure; imagesc(us_area); axis xy; colorbar;
+save(save_filename(masked_label), 'us_area', 'lat_coords', 'long_coords');
 
-
-save(filename, 'us_area', 'lat_coords', 'long_coords');
+end

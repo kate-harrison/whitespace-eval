@@ -39,6 +39,10 @@ function [varargout] = load_by_label(label)
 %
 %   POPULATION:     [population_map]
 %
+%   REGION_AREAS:   [areas lat_coords long_coords]
+%
+%   REGION_MASK:    [mask lat_coords long_coords]
+%
 %   REGION_OUTLINE: [lats longs]
 %
 %
@@ -82,6 +86,10 @@ switch(label.label_type)
         [varargout] = load_pl_squares_by_label(label);
     case 'population',
         [varargout] = load_population_by_label(label);
+    case 'region_areas',
+        [varargout] = load_region_areas_by_label(label);
+    case 'region_mask',
+        [varargout] = load_region_mask_by_label(label);
     case 'region_outline',
         [varargout] = load_region_outline_by_label(label);
     otherwise,
@@ -516,6 +524,42 @@ switch(population_label.type)
     otherwise,
         error(['Unexpected population type: ' population_label.type]);
 end
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_AREAS
+% -------------------------------------------------------------------------
+function [out] = load_region_areas_by_label(region_areas_label)
+% [lats longs] = load_region_areas_by_label(region_areas_label)
+
+if (~data_exists(region_areas_label))
+    make_data(region_areas_label);
+end
+
+region_areas_filename = generate_filename(region_areas_label);
+file = load([region_areas_filename '.mat']);
+
+out = {file.us_area file.lat_coords file.long_coords};
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_MASK
+% -------------------------------------------------------------------------
+function [out] = load_region_mask_by_label(region_mask_label)
+% [lats longs] = load_region_mask_by_label(region_mask_label)
+
+if (~data_exists(region_mask_label))
+    make_data(region_mask_label);
+end
+
+region_mask_filename = generate_filename(region_mask_label);
+file = load([region_mask_filename '.mat']);
+
+out = {file.is_in_us file.lat_coords file.long_coords};
 
 end
 

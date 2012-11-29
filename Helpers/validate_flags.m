@@ -11,7 +11,7 @@ function [varargout] = validate_flags(file_type, flag_type, flag_value)
 
 
 % These are flags that may appear in multiple file types and thus bypass
-% that routing system
+% the normal routing system
 switch(flag_type)
     case 'map_size',
         % Validate map size
@@ -81,51 +81,10 @@ switch(flag_type)
             error(['Invalid year for tower data. Valid years: ' ...
                 cellstr2str(get_simulation_value('valid_tower_data_years'))]);
         end
-        return;
-
-        
+        return;  
 end
 
 switch(file_type)
-    
-    
-    case 'jam',             % JAM
-        switch(flag_type)
-            case 'stage',
-                switch(flag_value)
-                    case {'chan_data', 'power_map', 'rate_map'}, % do nothing
-                    otherwise, error(['Invalid jam stage: ' flag_value]);
-                end
-                
-            case 'model',
-                if (flag_value == 6)
-                    display('*** Warning: model=6 is a special test model. Don''t use it normally!');
-                else
-                if (flag_value > 5 || flag_value < 0)
-                    error(['Invalid jam model number: ' num2str(flag_value)]);
-                end
-                end
-                
-            case 'power_type',
-                switch(flag_value)
-                    case {'none', 'new_power', 'old_dream', 'flat3'}, % do nothing
-                    otherwise, error(['Invalid jam power type: ' flag_value]);
-                end
-                
-            case 'tax',
-                if (flag_value < 0)
-                    error(['Invalid jam tax: ' num2str(flag_value)]);
-                end
-                
-            case 'p'
-                if any(flag_value < 0)  % mostly trust generate_label to catch errors here
-                    error(['Invalid jam p: ' num2str(flag_value)]);
-                end
-        end
-        
-
-        
-    
     case 'capacity',        % CAPACITY
         switch(flag_type)
             case 'capacity_type',
@@ -196,6 +155,53 @@ switch(file_type)
                 end
         end
     
+    case 'hex',
+        switch(flag_type)
+            case 'type'
+                switch(flag_value)
+                    case {'wifi', 'cellular'},   % do nothing
+                    otherwise,
+                        error(['Invalid HEX type: ' flag_value ...
+                            '. Valid options are: wifi, cellular']);
+                end
+        end
+
+    
+    case 'jam',             % JAM
+        switch(flag_type)
+            case 'stage',
+                switch(flag_value)
+                    case {'chan_data', 'power_map', 'rate_map'}, % do nothing
+                    otherwise, error(['Invalid jam stage: ' flag_value]);
+                end
+                
+            case 'model',
+                if (flag_value == 6)
+                    display('*** Warning: model=6 is a special test model. Don''t use it normally!');
+                else
+                if (flag_value > 5 || flag_value < 0)
+                    error(['Invalid jam model number: ' num2str(flag_value)]);
+                end
+                end
+                
+            case 'power_type',
+                switch(flag_value)
+                    case {'none', 'new_power', 'old_dream', 'flat3'}, % do nothing
+                    otherwise, error(['Invalid jam power type: ' flag_value]);
+                end
+                
+            case 'tax',
+                if (flag_value < 0)
+                    error(['Invalid jam tax: ' num2str(flag_value)]);
+                end
+                
+            case 'p'
+                if any(flag_value < 0)  % mostly trust generate_label to catch errors here
+                    error(['Invalid jam p: ' num2str(flag_value)]);
+                end
+        end
+        
+    
     case 'mac',             % MAC EXCLUSIONS
         % All portions of this label are checked above
         
@@ -251,20 +257,22 @@ switch(file_type)
                             flag_value ' (valid values: raw, density)']);
                 end
             otherwise,
-                error(['Invalid flag type.']);
+                error(['Invalid flag type: ' flag_type]);
         end
         
-    case 'hex',
+    case 'region_areas',
         switch(flag_type)
-            case 'type'
+            case 'type',
                 switch(flag_value)
-                    case {'wifi', 'cellular'},   % do nothing
+                    case {'masked', 'full'},
+                        % nothing
                     otherwise,
-                        error(['Invalid HEX type: ' flag_value ...
-                            '. Valid options are: wifi, cellular']);
+                        error(['Invalid region area type: ' ...
+                            flag_value ' (valid values: masked, full)']);
                 end
+            otherwise,
+                error(['Invalid flag type: ' flag_type]);
         end
-        
         
     otherwise,
         error(['Invalid file type: ' file_type]);

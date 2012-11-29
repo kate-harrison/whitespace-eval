@@ -30,6 +30,10 @@ switch(label.label_type)
         validate_pl_squares_label(label);
     case 'population',
         validate_population_label(label);
+    case 'region_areas',
+        validate_region_areas_label(label);
+    case 'region_mask',
+        validate_region_mask_label(label);
     case 'region_outline',
         validate_region_outline_label(label);
     case 'none',
@@ -202,6 +206,29 @@ function [] = validate_population_label(population_label)
 validate_flags('population', 'type', population_label.type);
 validate_flags('population', 'population_type', population_label.population_type);
 validate_flags('population', 'map_size', population_label.map_size);
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_AREAS
+% -------------------------------------------------------------------------
+function [] = validate_region_areas_label(region_areas_label)
+%   [] = validate_region_areas_label(region_areas_label)
+
+validate_flags('region_areas', 'map_size', region_areas_label.map_size);
+validate_flags('region_areas', 'type', region_areas_label.type);
+
+end
+
+
+% -------------------------------------------------------------------------
+%     REGION_MASK
+% -------------------------------------------------------------------------
+function [] = validate_region_mask_label(region_mask_label)
+%   [] = validate_region_mask_label(region_mask_label)
+
+validate_flags('region_mask', 'map_size', region_mask_label.map_size);
 
 end
 
