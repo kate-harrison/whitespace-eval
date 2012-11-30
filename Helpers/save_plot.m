@@ -44,7 +44,8 @@ end
 
 % Title
 thand = get(gca, 'title');
-set(thand, 'fontname', font_name)
+set(thand, 'fontname', font_name);
+set(thand, 'fontsize', font_size);
 
 % Colorbar
 try
