@@ -640,7 +640,7 @@ make_map(total_capacity/plot_scale, options);
 clc; clear all; close all;
 
 map_size = get_simulation_value('map_size');
-get_radio_astr_exclusions(map_size, 1);
+get_radio_astr_exclusions(map_size, 1, 1);
 axis off;
 save_plot('png', 'Thesis/EXCLUSIONS radio_astronomy', 1);
 

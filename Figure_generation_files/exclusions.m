@@ -17,7 +17,7 @@ make_map(total, 'title', 'Channels lost to metropolitan exclusions', ...
 %% Channels lost to... radio astronomy exclusions
 clc; clear all; close all;
 map_size = '400x600';
-mask = get_radio_astr_exclusions(map_size);
+mask = get_radio_astr_exclusions(map_size, 1);
 excl = ~mask;
 % total = squeeze(sum(excl,1));
 total = aggregate_bands(excl);
@@ -78,7 +78,7 @@ make_map(total, 'title', 'Channels available after only TV towers (all digital)'
 clc; clear all; close all;
 map_size = '200x300';
 metro_mask = get_metro_area_exclusions(map_size);
-astr_mask = get_radio_astr_exclusions(map_size);
+astr_mask = get_radio_astr_exclusions(map_size, 1);
 fcc_mask_label = generate_label('fcc_mask', 'cr-2011', '200x300');
 fcc_mask = load_by_label(fcc_mask_label);
 

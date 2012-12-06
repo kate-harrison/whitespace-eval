@@ -1,5 +1,6 @@
 function [excl_mask] = get_radio_astr_exclusions(map_size, varargin)
-%   [excl_maps] = get_radio_astr_exclusions(map_size, [*])
+%   [excl_maps] = get_radio_astr_exclusions(map_size, [plot], 
+%                                           [display_text], [separation_dist])
 %
 %   Returns a set of maps (one per channel) with
 %       0 = CR cannot transmit under radio astronomy rules
@@ -7,10 +8,12 @@ function [excl_mask] = get_radio_astr_exclusions(map_size, varargin)
 %
 %   Note: values outside the US are set to 0.
 %
-%   map_size = resolution for resulting data
+%   map_size: resolution for resulting data
 %       Accepted values: '200x300', '201x301', '400x600'
-%   * is an optional second argument; if it exists at all, the original
+%   plot (optional): if it evaluates to true, plot the sites on a map
+%   display_text (optional): if it evaluates to true, the original
 %       information for the radio astronomy areas will be displayed.
+%   separation_dist (optional): specify a non-standard separation distance
 %
 % The original list can be found in the 2010 FCC rules. Updates are as
 % follows:
@@ -39,17 +42,23 @@ function [excl_mask] = get_radio_astr_exclusions(map_size, varargin)
 %           Sugar Grove, WV are 38° 30? 58? N Latitude and 79° 16? 48? W
 %           Longitude.
 
-
-if ~isempty(varargin)
+if nargin >= 3 && varargin{2}
     display(' ------- FORMAT ------- ');
     display('NAME (LOCATION)');
     display('   Lat:  LATITUDE in decimal degrees (LATITUDE in deg, min, sec)');
     display('   Long: LONGITUDE in decimal degrees (LONGITUDE in deg, min, sec)');
     display(' ----- END FORMAT ----- ');
     display(' ');
+    display_text = 1;
+else
+    display_text = 0;
 end
 
-separation_dist = 2.4;
+if nargin >= 4
+    separation_dist = varargin{3};
+else
+    separation_dist = 2.4;
+end
 
 astr(01) = make_astr('Allen Telescope Array', 'Hat Creek, CA', [40 49 4], [121 28 24]);
 astr(02) = make_astr('Arecibo Observatory', 'Arecibo, PR', [18 20 37], [66 45 11]);
@@ -77,7 +86,7 @@ lats_vec = lats_map(:);
 
 % For each metropolitan area
 for i = 1:length(astr)
-    if ~isempty(varargin)
+    if display_text
         display_astr(astr(i));
     end
     
@@ -94,22 +103,22 @@ excl_mask = shiftdim(repmat(excl_mask, [1 1 num_layers]),2);
 excl_mask = logical(excl_mask);
 
 
-
-% Plot on US map (no sampling)
-figure; plot_shapefile('us');
-for i = 1:length(astr)
-    % Plot visualization aid
-    [Y X] = km_to_latlong(astr(i).lat, astr(i).long, 10*separation_dist, [0:15:360]);
-    patch(X, Y, 'b');
-
-    % Plot actual locations
-    [Y X] = km_to_latlong(astr(i).lat, astr(i).long, separation_dist, [0:15:360]);
-    patch(X, Y, 'r');
+if nargin >= 2 && varargin{1}
+    % Plot on US map (no sampling)
+    figure; plot_shapefile('us');
+    for i = 1:length(astr)
+        % Plot visualization aid
+        [Y X] = km_to_latlong(astr(i).lat, astr(i).long, 10*separation_dist, [0:15:360]);
+        patch(X, Y, 'b');
+        
+        % Plot actual locations
+        [Y X] = km_to_latlong(astr(i).lat, astr(i).long, separation_dist, [0:15:360]);
+        patch(X, Y, 'r');
+    end
+    
+    xlabel('Longitude (degrees)');
+    ylabel('Latitude (degrees)');
 end
-
-xlabel('Longitude (degrees)');
-ylabel('Latitude (degrees)');
-
 
 
 end
