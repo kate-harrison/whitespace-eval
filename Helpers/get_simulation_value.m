@@ -11,6 +11,8 @@ function [varargout] = get_simulation_value(variable_name)
 %   minmax_lat - [min_lat max_lat] for the map depending on the region code
 %   minmax_long - [min_long max_long] for the map depending on the region code
 %   region_shapefile - [S,A], the shapefile data describing the region
+%   unused_channels - channels which are in the channel list but not used
+%                       locally
 %
 % SIMULATION PARAMETERS
 %   map_size - default map size (options: 200x300, 400x600)
@@ -99,7 +101,17 @@ switch(variable_name)
                 error(['Unsupported region code: ' ...
                     get_simulation_value('region_code')]);
         end
-% END LOCALIZATION
+        
+    case 'unused_channels',
+        switch(get_simulation_value('region_code'))
+            case 'US',
+                value = [3 4];
+%             case 'AUS',
+%                 value = [];
+            otherwise,
+                error(['Unsupported region code: ' ...
+                    get_simulation_value('region_code')]);
+        end% END LOCALIZATION
       
 
 % BEGIN SIMULATION PARAMETERS
