@@ -37,6 +37,8 @@ end
 [us_area lat_coords long_coords] = get_us_area(map_size);
 is_in_us = get_us_map(map_size, 1);
 
+[type year] = split_flag(population_label.population_type);
+year = str2num(year);
 
 tract_info = load_tract_info(year);
 
