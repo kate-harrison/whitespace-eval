@@ -1,4 +1,18 @@
 function PolygonClip_example
+% Usage:
+%
+% PolygonClip(P1,P2,type)
+%
+% where P1.x, P1.y are lists of vertices for polygon 1 (A).
+%
+% case 0; title('A-B')
+% case 1; title('A.and.B (standard)')
+% case 2; title('xor(A,B)')
+% case 3; title('union(A,B)')
+%
+% See
+% http://www.mathworks.com/matlabcentral/fx_files/8818/1/PolygonClipper_Example.png
+% for illustrations.
 
     P1.x=[-1 1 1 -1]; P1.y=[-1 -1 1 1]; P1.hole=0;
     P1(2).x=[-1 1 1 -1]*.5; P1(2).y=[-1 -1 1 1]*.5; P1(2).hole=1;
