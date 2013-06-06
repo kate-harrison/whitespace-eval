@@ -1,8 +1,14 @@
-function [] = make_draft_map(map, title_text)
+function [] = make_draft_map(map, title_text, varargin)
 %   [] = make_draft_map(map, title_text)
+
+new_figure = 1;
+if length(varargin) > 0
+    new_figure = varargin{1};
+end
 
 if islogical(map)
     map = map*1.0;
+    warning('Converting logical map into float map.');
 end
 
 map_size = get_map_size_string(size(map));
@@ -11,7 +17,9 @@ if ~isinf(map(1))   % automask
     map(~region_mask) = inf;
 end
 
-figure; set(gcf, 'outerposition', [440   296   809   555]);
+if new_figure
+    figure; set(gcf, 'outerposition', [440   296   809   555]);
+end
 
 imagesc(map);
 title(title_text);
