@@ -9,6 +9,7 @@ function [] = make_map(varargin)
 %    o map_type - Data scaling [ {linear} | log | atan ]
 %    o title - Title of the plot [ {''} | string ]
 %    o colorbar_title - Title for the colorbar [ {''} | string ]
+%    o colorbar_enabled - [ {on} | off ]
 %    o filename - Name for saved figure (if 'save' is 'on') [ {timestamp} |
 %       string ]
 %    o save - Save the plot [ {on} | off ]
@@ -76,6 +77,7 @@ default_map_scale = max(data(isfinite(data))) * 1.1;
 options = struct('map_type', 'linear', ...
                  'title', '', ...
                  'colorbar_title', '', ...
+                 'colorbar_enabled', 'on', ...
                  'filename', time_string, ...
                  'save', 'on', ...
                  'scale', default_map_scale, ...
@@ -220,7 +222,10 @@ F = figure('visible', options.visibility); hold on;
 
 % Plot the data
 imagesc(plot_fcn(data));
-colorbar; axis image; axis off;
+if string_is(options.colorbar_enabled, 'on')
+    colorbar;
+end
+axis image; axis off;
 
 switch(options.state_outlines)
     case 'on',
@@ -241,15 +246,16 @@ switch(options.state_outlines)
     case 'off', % do nothing
 end
 
-
-% % Put the image in the right place
-TI = get(gca,'TightInset');
-TI(1) = TI(1) - .01;
-TI(2) = TI(2) + .1;
-OP = get(gca,'OuterPosition');
-Pos = OP + [ TI(1:2), -TI(1:2)-TI(3:4) ];
-Pos = Pos * .83;
-set( gca,'Position',Pos);
+if string_is(options.colorbar_enabled, 'on')
+    % % Put the image in the right place
+    TI = get(gca,'TightInset');
+    TI(1) = TI(1) - .01;
+    TI(2) = TI(2) + .1;
+    OP = get(gca,'OuterPosition');
+    Pos = OP + [ TI(1:2), -TI(1:2)-TI(3:4) ];
+    Pos = Pos * .83;
+    set( gca,'Position',Pos);
+end
 
 % Set up the colormap
 cmap = jet(2^20);
@@ -276,23 +282,26 @@ else                            % vector input
     scale = plot_fcn(options.scale);    
 end
 
-if (length(scale) > 1)
-    switch(options.integer_labels)
-        case 'off',    labels = round(plot_fcn_inv(scale)*10)/10;
-        case 'on',     labels = unique(round(plot_fcn_inv(scale)));
-    end
-    scale = plot_fcn(labels);
-    h=colorbar('YTick', scale, 'YTickLabel', {num2str(labels')});
-    set(h, 'FontSize', font_size);
-end
 
-% Title the colorbar
-% cb = colorbar;
-colorbar_label = [options.colorbar_title ' '];
-% text(675, 160, colorbar_label, 'Units', 'pixels', 'Rotation', 90, 'FontSize', font_size);
-yl = ylabel(h, colorbar_label);
-set(yl, 'FontSize', font_size, 'FontName', font_name);
-set(h, 'FontSize', font_size, 'FontName', font_name);
+if string_is(options.colorbar_enabled, 'on')
+    if (length(scale) > 1)
+        switch(options.integer_labels)
+            case 'off',    labels = round(plot_fcn_inv(scale)*10)/10;
+            case 'on',     labels = unique(round(plot_fcn_inv(scale)));
+        end
+        scale = plot_fcn(labels);
+        h=colorbar('YTick', scale, 'YTickLabel', {num2str(labels')});
+        set(h, 'FontSize', font_size);
+    end
+
+    % Title the colorbar
+    % cb = colorbar;
+    colorbar_label = [options.colorbar_title ' '];
+    % text(675, 160, colorbar_label, 'Units', 'pixels', 'Rotation', 90, 'FontSize', font_size);
+    yl = ylabel(h, colorbar_label);
+    set(yl, 'FontSize', font_size, 'FontName', font_name);
+    set(h, 'FontSize', font_size, 'FontName', font_name);
+end
 
 options.save = lower(options.save);
 switch(options.save)
