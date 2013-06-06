@@ -5,7 +5,7 @@ function [] = set_bw_cmap(varargin)
 %   value is white. Uses the current figure's colormap unless [jet_size] is
 %   specified in which case it uses the colormap jet(jet_size).
 %
-%   See also: jet
+%   See also: jet, set_wb_cmap
 
 
 % Set up the colormap
