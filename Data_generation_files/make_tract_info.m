@@ -250,5 +250,5 @@ for i = 1:num_els
 end
 
 
-save(result_filename, 'tract_info', 'pop', 'pop_density', 'land_area', 'total_area');
+save_data(result_filename, 'tract_info', 'pop', 'pop_density', 'land_area', 'total_area');
 

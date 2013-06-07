@@ -173,8 +173,9 @@ cr_fm_label.device_type = ['cr-' num2str(tower_data_year)];
 mask = cr_coch_mask & cr_adjc_mask;
 extras.adjacent_channel_mask = cr_adjc_mask;
 extras.cochannel_mask = cr_coch_mask;
-save(save_filename(cr_fm_label), 'mask', 'extras');
-
+save_data(save_filename(cr_fm_label), 'mask', 'extras');
+add_extended_info_to_file(save_filename(cr_fm_label), ...
+    'get_AD_protection_radius', 'get_rn_minus_rp');
 
 
 
@@ -184,6 +185,9 @@ tv_fm_label.device_type = ['tv-' num2str(tower_data_year)];
 tv_fm_label.char_label = 'none';
 mask = tv_user_mask;
 extras.contents = 'none';   % Make sure extras exists
-save(save_filename(tv_fm_label), 'mask', 'extras');
+save_data(save_filename(tv_fm_label), 'mask', 'extras');
+add_extended_info_to_file(save_filename(tv_fm_label), ...
+    'get_AD_protection_radius', 'get_rn_minus_rp');
+
 end
 

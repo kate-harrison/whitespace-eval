@@ -79,9 +79,9 @@ for i = 1:length(lat_coords)
     end
 end
 
-save(save_filename(full_label), 'us_area', 'lat_coords', 'long_coords');
+save_data(save_filename(full_label), 'us_area', 'lat_coords', 'long_coords');
 
 us_area = us_area .* is_in_us;  % zero outside the US
-save(save_filename(masked_label), 'us_area', 'lat_coords', 'long_coords');
+save_data(save_filename(masked_label), 'us_area', 'lat_coords', 'long_coords');
 
 end

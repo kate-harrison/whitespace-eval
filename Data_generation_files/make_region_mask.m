@@ -91,7 +91,7 @@ is_in_us = reshape(in_vec, size(is_in_us));
 
 
 %% Save the data
-save(save_filename(region_mask_label), 'is_in_us', 'num_lat_div', 'num_long_div', ...
+save_data(save_filename(region_mask_label), 'is_in_us', 'num_lat_div', 'num_long_div', ...
     'max_lat', 'min_lat', 'max_long', 'min_long', 'long_coords', 'lat_coords');
 
 

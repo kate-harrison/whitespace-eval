@@ -150,14 +150,14 @@ for a = 1:length(area_array)
     
     
 filename = ['Data/' generate_filename(hex_label) ' checkpoint=' num2str(a) '.mat'];
-save(filename, 'noises', 'signals', 'num_points');
+save_data(filename, 'noises', 'signals', 'num_points');
 
 end
 
 
 % Save the final data
-save(save_filename(hex_label), 'noises', 'signals', 'num_points', 'area_array');
-
+save_data(save_filename(hex_label), 'noises', 'signals', 'num_points', 'area_array');
+add_extended_info_to_file(save_filename(hex_label), 'get_hexagon_grid');
 
 end
 
@@ -212,7 +212,7 @@ else
     x_points = x_points / hexagon_width;
     y_points = y_points / hexagon_height;
     
-    save(points_filename, 'x_points', 'y_points');
+    save_data(points_filename, 'x_points', 'y_points');
 end
 
 

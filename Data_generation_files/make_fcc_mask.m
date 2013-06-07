@@ -124,7 +124,10 @@ switch(device_type)
         
         
 %         [cochannel_mask extras.wireless_mic_channels] = take_out_wireless_mic_channels(cochannel_mask);
-        
+%         extras.wireless_mic_channels_removed = 1;
+        extras.wireless_mic_channels_removed = 0;
+
+
         mask = cochannel_mask & adjacent_channel_mask;
         extras.cochannel_mask = cochannel_mask;
         extras.adjacent_channel_mask = adjacent_channel_mask;
@@ -180,6 +183,7 @@ switch(device_type)
 
 end
 
-save(save_filename(fcc_mask_label), 'mask', 'extras');
+save_data(save_filename(fcc_mask_label), 'mask', 'extras');
+add_extended_info_to_file(save_filename(fcc_mask_label), 'take_out_wireless_mic_channels', 'get_tower_data');
 
 end

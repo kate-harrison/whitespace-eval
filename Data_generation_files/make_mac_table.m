@@ -46,5 +46,5 @@ end
 interference = noise;
 mac_radii = radii;
 
-save(save_filename(mac_table_label), 'interference', 'mac_radii');
+save_data(save_filename(mac_table_label), 'interference', 'mac_radii');
 

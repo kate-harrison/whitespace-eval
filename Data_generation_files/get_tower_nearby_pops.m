@@ -120,7 +120,8 @@ if ~(exist(filename, 'file') == 2)
     pop_densities = populations ./ areas;
     
     clear tract_info
-    save(filename);
+    save_data(filename);
+    add_extended_info_to_file(filename, 'make_population', 'read_tower_data');
 end
 
 

@@ -156,7 +156,7 @@ total_pop = sum(sum(population))
 % Assign the population density
 pop_density = population ./ us_area;
 
-save(filename, 'population', 'pop_density', ...
+save_data(filename, 'population', 'pop_density', ...
     'lat_coords', 'long_coords', 'max_pop_density', 'min_pop_density');
-
+add_extended_info_to_file(filename, 'make_pop_info', 'make_tract_info');
 toc

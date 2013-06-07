@@ -352,7 +352,7 @@ for i = 1:length(chan_list)
 
 end
 
-save(save_filename(pl_squares_label), 'int', 'chan_list', 'dont_care_map', ...
+save_data(save_filename(pl_squares_label), 'int', 'chan_list', 'dont_care_map', ...
     'tower_area_map', 'tower_per_pixel_map');
 
 % The array of structures 'int' has the following fields:
@@ -415,7 +415,7 @@ end
 
 % Save output
 pl_squares = out;
-save(save_filename(pl_squares_label), 'pl_squares', 'pl_squares_label', ...
+save_data(save_filename(pl_squares_label), 'pl_squares', 'pl_squares_label', ...
     'chan_list', 'lat_coords', 'long_coords');
 
 end

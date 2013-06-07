@@ -13,5 +13,5 @@ font_size = 16;
 font_size_shift = 4;
 font_name = 'computermodern';
 
-save(filename);
+save_data(filename);
 end

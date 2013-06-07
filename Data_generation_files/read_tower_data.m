@@ -344,6 +344,6 @@ end
 chan_data(~in_vec, :) = [];
 
 
-save(filename, 'chan_data', 'chan_no_idx', 'lat_idx', 'long_idx', ...
+save_data(filename, 'chan_data', 'chan_no_idx', 'lat_idx', 'long_idx', ...
     'haat_idx', 'erp_idx', 'dist_th_idx', 'fcc_rp_idx', 'ad_idx');
 end

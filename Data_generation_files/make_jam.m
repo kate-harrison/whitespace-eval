@@ -107,7 +107,7 @@ if (jam_label.model == 0)   % Make the model 0 data
     power_map(~is_in_us) = 0;
     
     
-    save(save_filename(jam_label));
+    save_data(save_filename(jam_label));
     return;
 end
 
@@ -146,7 +146,7 @@ old_powers = ([zeros(size(rp_list))'; old_powers'])';   % Put zero power here
 [new_power_map old_power_map flat_power_map1 flat_power_map2 beta_map] = ...
     make_jam_maps(chan_data, chan_data_indices, betas, r_arrays, new_powers, old_powers, map_size);
 
-%         save(filename);
+%         save_data(filename);
 
 % Make flat jam 3 which is the minimum of all allowed powers outside of
 % r_p across the US (on a per-channel basis)
@@ -207,7 +207,7 @@ flat_power_map3 = flat_power_map3 .* fcc_mask;
 
 
 
-save(save_filename(jam_label));
+save_data(save_filename(jam_label));
 
 
 
@@ -444,7 +444,7 @@ end
 
 
 
-save(save_filename(jam_label), 'chan_data', 'chan_data_indices', 'betas', ...
+save_data(save_filename(jam_label), 'chan_data', 'chan_data_indices', 'betas', ...
     'r_arrays', 'new_powers', 'old_powers');
 
 end

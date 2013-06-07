@@ -363,4 +363,7 @@ switch(variable)
 end
 
 
-save(save_filename(ccdf_points_label), 'average', 'median', 'extras', 'population_type');
+save_data(save_filename(ccdf_points_label), 'average', 'median', 'extras', 'population_type');
+add_extended_info_to_file(save_filename(ccdf_points_label), ...
+    'calculate_cdf_from_map', 'load_by_label', 'get_total_capacity', ...
+    'aggregate_bands');

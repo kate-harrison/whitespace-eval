@@ -364,10 +364,10 @@ end
     fair_rate_map = apply_median_filter(fair_rate_map, p, map_size, pop_type);
     
     
-    save(save_filename(jam_label), ...
+    save_data(save_filename(jam_label), ...
         'jam_label', 'pl_squares_width', 'fair_rate_map', 'avg_rate_map', 'min_rate_map', ...
         'uniform_power_map', 'fair_rate_map_nomedfilt', 'pl_squares_label');
-    
+    add_extended_info_to_file(save_filename(jam_label), 'make_jam', 'make_pl_squares');
 end
 
 

@@ -11,7 +11,7 @@ height = char_label.height;
 power = char_label.power;
 
 
-save(save_filename(char_label), 'height', 'power');
+save_data(save_filename(char_label), 'height', 'power');
 
 
 end

@@ -112,7 +112,7 @@ switch(cell_model)
         
         % Save
         filename = save_filename(capacity_label);
-        save(filename, 'capacity', 'extras');
+        save_data(filename, 'capacity', 'extras');
 
         
         
@@ -130,7 +130,7 @@ capacity_filename = save_filename(capacity_label);
 display(['Saving ' capacity_filename]);
 
 % Save the file
-save(capacity_filename, 'capacity', 'extras');
+save_data(capacity_filename, 'capacity', 'extras');
 
 end
 

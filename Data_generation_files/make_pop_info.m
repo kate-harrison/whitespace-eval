@@ -108,4 +108,4 @@ pop_data.thu_idx = 5;
 
 
 % Save the data
-save(result_filename, 'pop_data');
+save_data(result_filename, 'pop_data');

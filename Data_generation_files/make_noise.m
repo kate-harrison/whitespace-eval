@@ -23,7 +23,7 @@ TNP = get_simulation_value('TNP');
 % Special case for channel 52 option
 if (string_is(channels, '52'))
     noise = is_in_us * TNP;
-    save(save_filename(noise_label), 'noise');
+    save_data(save_filename(noise_label), 'noise');
     return;
 end
 
@@ -138,15 +138,15 @@ else
             noise(c,:,:) = squeeze(noise(c,:,:)) + temp_noise_map;
         end
         
-        %     save('noise_data_new', 'noise');
+        %     save_data('noise_data_new', 'noise');
         %     return;
         
     end
     
     noise_data = noise;
     clear noise;
-    save(save_filename(temp_noise_label));
-    
+    save_data(save_filename(temp_noise_label));
+    add_extended_info_to_file(save_filename(temp_noise_label), 'read_tower_data');
 end
 
 
@@ -219,6 +219,6 @@ end
     
 
 noise = cochannel_noise + adj_channel_noise*leak;
-save(save_filename(noise_label), 'noise');
-
+save_data(save_filename(noise_label), 'noise');
+add_extended_info_to_file(save_filename(temp_noise_label), 'read_tower_data');
 end

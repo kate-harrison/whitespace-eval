@@ -55,6 +55,6 @@ lats = change_range(state_lats, min_lat, max_lat, 1, length(lat_coords));
 longs = change_range(state_longs, min_long, max_long, 1, length(long_coords));
 
 
-save(filename, 'lats', 'longs');
+save_data(filename, 'lats', 'longs');
 
 end
