@@ -136,9 +136,13 @@ for i = 1:length(lat_coords)
                 % Add the portion of the population in that tract that
                 % should be in this pixel
                 population(i,j) = population(i,j) + tract_info(n).pop * perc_area;
-                min_pop_density(i,j) = min(min_pop_density(i,j), tract_info(n).pop_density);
-                max_pop_density(i,j) = max(max_pop_density(i,j), tract_info(n).pop_density);
-                
+                try
+                    min_pop_density(i,j) = min(min_pop_density(i,j), tract_info(n).pop_density);
+                    max_pop_density(i,j) = max(max_pop_density(i,j), tract_info(n).pop_density);
+                catch
+                    min_pop_density(i,j) = -1;
+                    max_pop_density(i,j) = -1;
+                end
                 
             end
         end
