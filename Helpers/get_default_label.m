@@ -42,6 +42,8 @@ switch(lower(label_type))
     case 'pl_squares',
         label = generate_label('pl_squares', 'local', 0, 2000, ...
             population_type, map_size, get_default_label('char'));
+    case 'population',
+        label = generate_label('population', 'raw', 'real', map_size);
     otherwise,
         error(['Unrecognized label type: ' label_type ...
             '; acceptable label types: ' get_simulation_value('labels')]);
