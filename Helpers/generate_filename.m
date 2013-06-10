@@ -96,7 +96,15 @@ end
 function [filename] = generate_fcc_mask_filename(fcc_mask_label)
 %   [filename] = generate_mask_label(fcc_mask_label)
 
-filename = ['FCC_MASK device_type=' fcc_mask_label.device_type ' map_size=' fcc_mask_label.map_size];
+if fcc_mask_label.apply_wireless_mic_exclusions
+    mic_excl_str = 'true';
+else
+    mic_excl_str = 'false';
+end
+
+filename = ['FCC_MASK device_type=' fcc_mask_label.device_type ...
+    ' map_size=' fcc_mask_label.map_size ...
+    ' mic_excl=' mic_excl_str];
 
 
 end

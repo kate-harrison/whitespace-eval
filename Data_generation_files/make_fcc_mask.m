@@ -12,6 +12,7 @@ end
 [device_type tower_data_year] = split_flag(fcc_mask_label.device_type);
 
 map_size = fcc_mask_label.map_size;
+apply_wireless_mic_exclusions = fcc_mask_label.apply_wireless_mic_exclusions;
 
 [is_in_us lat_coords long_coords] = get_us_map(map_size, 1);
 chan_list = get_simulation_value('chan_list');
@@ -123,10 +124,12 @@ switch(device_type)
         end
         
         
-%         [cochannel_mask extras.wireless_mic_channels] = take_out_wireless_mic_channels(cochannel_mask);
-%         extras.wireless_mic_channels_removed = 1;
-        extras.wireless_mic_channels_removed = 0;
-
+        if apply_wireless_mic_exclusions
+            [cochannel_mask extras.wireless_mic_channels] = take_out_wireless_mic_channels(cochannel_mask);
+            extras.wireless_mic_channels_removed = 1;
+        else
+            extras.wireless_mic_channels_removed = 0;
+        end
 
         mask = cochannel_mask & adjacent_channel_mask;
         extras.cochannel_mask = cochannel_mask;

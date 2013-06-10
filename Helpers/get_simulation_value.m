@@ -15,7 +15,8 @@ function [varargout] = get_simulation_value(variable_name)
 %                       locally
 %
 % SIMULATION PARAMETERS
-%   map_size - default map size (options: 200x300, 400x600)
+%   map_size - default map size (options: 200x300, 400x600, etc.)
+%   apply_wireless_mic_exclusions - default choice for this option
 %   recompute - recompute if .mat file exists? (1 = yes, 0 = no)
 %   figure_visibility - display figures? ('on' = yes, 'off' = no)
 %
@@ -117,6 +118,9 @@ switch(variable_name)
 % BEGIN SIMULATION PARAMETERS
     case 'map_size',
         value = '200x300';  % Default map size
+        
+    case 'apply_wireless_mic_exclusions',
+        value = true;   % default value
 
     case 'recompute',
         value = 0;
@@ -263,7 +267,8 @@ switch(variable_name)
 
 % BEGIN VALIDATION
     case 'valid_map_sizes',
-        value = {'200x300', '201x301', '400x600', '800x1200', '1600x2400', '20x30'};
+        value = {'200x300', '201x301', '400x600', '800x1200', '1600x2400', ...
+            '20x30', '3200x4800', '100x150'};
 
     case 'valid_region_codes',  value = {'US', 'AUS'};  % US, Australia
 

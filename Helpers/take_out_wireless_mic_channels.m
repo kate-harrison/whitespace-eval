@@ -34,13 +34,18 @@ map_size = get_map_size_string(size(mask));
 % to wireless microphone exclusions
 wireless_mic_channels = zeros(size(mask));
 
+% Mark channels 2-13 as unavailable so that they aren't chosen as wireless
+% mic channels (see FCC rules 2010, paragraph 30 and section 15.707a).
+test_mask = mask;
+test_mask(1:get_channel_index(13),:,:) = 0;
+
 for i = 1:length(lat_coords)
     for j = 1:length(long_coords)
         if (~is_in_us(i,j))
             continue;
         end
         
-        list = mask(:, i, j);
+        list = test_mask(:, i, j);
         
         % Search for a channel in [2, 36] to remove; if none found, look
         % for two channels in the upper range and otherwise only look for
@@ -64,13 +69,13 @@ for i = 1:length(lat_coords)
             end
         end
         
-        % Set the channels as unavailable
-        mask([l h], i, j) = 0;
-        
         % Mark which channels were removed
         wireless_mic_channels([l h], i, j) = 1;
 
     end
 end
+
+% Set the channels as unavailable
+mask(logical(wireless_mic_channels)) = 0;
 
 end

@@ -16,7 +16,8 @@ function [label] = generate_label(varargin)
 %   CHAR: (height, power)
 %           - height: > 10, < 1200
 %           - power: >= 0
-%   FCC mask: (device_type, map_size)
+%   FCC mask: (device_type, map_size, apply_wireless_mic_exclusions)
+%           - apply_wireless_mic_exclusions = {true, false}
 %   FM mask: (device_type, map_size, margin_value, char_label)
 %           - margin_value: >= 0
 %   JAM: (stage, model, power_type, population_type, tower_data_year, 
@@ -82,7 +83,7 @@ switch(varargin{1})
         num_needed_args = 2; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_char_label(varargin{2:end});
     case 'fcc_mask',
-        num_needed_args = 2; verify_num_args(num_needed_args, nargin, varargin{1});
+        num_needed_args = [2 3]; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_fcc_mask_label(varargin{2:end});
     case 'fm_mask',
         num_needed_args = 4; verify_num_args(num_needed_args, nargin, varargin{1});
@@ -226,14 +227,23 @@ end
 % -------------------------------------------------------------------------
 %     FCC mask
 % -------------------------------------------------------------------------
-function [fcc_mask_label] = generate_fcc_mask_label(device_type, map_size)
-%   [fcc_mask_label] = generate_mask_label(device_type, map_size)
+function [fcc_mask_label] = generate_fcc_mask_label(device_type, map_size, varargin)
+%   [fcc_mask_label] = generate_mask_label(device_type, map_size, [apply_wireless_mic_exclusions])
 
 device_type = validate_flags('', 'device_type', device_type);
 fcc_mask_label.device_type = device_type;
 
 fcc_mask_label.map_size = map_size;
 
+% Figure out the correct value for 'apply_wireless_mic_exclusions'
+if ~isempty(varargin)   % if the user specified some value, use it (we will validate later)
+    fcc_mask_label.apply_wireless_mic_exclusions = varargin{1};
+else    % user did not specify => use default value
+    fcc_mask_label.apply_wireless_mic_exclusions = ...
+        get_simulation_value('apply_wireless_mic_exclusions');
+    soft_warning('Using the default choice for wireless mic exclusions.');
+end
+    
 
 end
 
@@ -250,7 +260,6 @@ fm_mask_label.device_type = device_type;
 fm_mask_label.map_size = map_size;
 fm_mask_label.margin_value = margin_value;
 fm_mask_label.char_label = char_label;
-
 
 end
 

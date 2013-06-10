@@ -106,6 +106,8 @@ function [] = validate_fcc_mask_label(fcc_mask_label)
 
 validate_flags('fcc_mask', 'device_type', fcc_mask_label.device_type);
 validate_flags('fcc_mask', 'map_size', fcc_mask_label.map_size);
+validate_flags('fcc_mask', 'apply_wireless_mic_exclusions', ...
+    fcc_mask_label.apply_wireless_mic_exclusions);
 
 end
 

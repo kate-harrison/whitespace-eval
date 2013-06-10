@@ -82,6 +82,14 @@ switch(flag_type)
                 cellstr2str(get_simulation_value('valid_tower_data_years'))]);
         end
         return;  
+        
+    case 'apply_wireless_mic_exclusions',
+        if ~islogical(flag_value)
+        error(['Invalid input for argument ''apply_wireless_mic_exclusions''.' ...
+            ' The argument must be logical (use the command ''help logical''' ...
+            ' if you are unsure what this means.']);
+        end
+        return;
 end
 
 switch(file_type)
