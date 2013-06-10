@@ -152,6 +152,8 @@ switch(capacity_label.capacity_type)
 end
 
 
+check_for_warnings(file);
+
 end
 
 % -------------------------------------------------------------------------
@@ -172,6 +174,8 @@ out{1} = file.average;
 out{2} = file.median;
 out{3} = file.extras;
 
+check_for_warnings(file);
+
 end
 
 % -------------------------------------------------------------------------
@@ -182,6 +186,8 @@ function [out] = load_char_by_label(char_label)
 
 out{1} = char_label.height;
 out{2} = char_label.power;
+
+check_for_warnings(file);
 
 end
 
@@ -215,6 +221,8 @@ end
 out{1} = mask;
 out{2} = file.extras;
 
+check_for_warnings(file);
+
 end
 
 
@@ -246,6 +254,8 @@ end
 
 out{1} = mask;
 out{2} = file.extras;
+
+check_for_warnings(file);
 
 end
 
@@ -366,6 +376,8 @@ end
 % % out{4} = file.x_points;
 % % out{5} = file.y_points;
 
+check_for_warnings(file);
+
 end
 
 
@@ -393,6 +405,8 @@ out{4} = file.num_points;
 % out{4} = file.x_points;
 % out{5} = file.y_points;
 
+check_for_warnings(file);
+
 end
 
 
@@ -413,6 +427,8 @@ file = load([mac_table_filename '.mat']);
 out{1} = file.interference;
 out{2} = file.mac_radii;
 
+check_for_warnings(file);
+
 end
 
 
@@ -430,6 +446,8 @@ file = load([noise_filename '.mat']);
 
 % noise = file.noise;
 out{1} = file.noise;
+
+check_for_warnings(file);
 
 end
 
@@ -458,6 +476,8 @@ switch(pl_squares_label.type)
         out = {file.pl_squares};
         % also available: chan_list, lat_coords, long_coords, pl_squares_label
 end
+
+check_for_warnings(file);
 
 end
 
@@ -525,6 +545,8 @@ switch(population_label.type)
         error(['Unexpected population type: ' population_label.type]);
 end
 
+check_for_warnings(file);
+
 end
 
 
@@ -542,6 +564,8 @@ region_areas_filename = generate_filename(region_areas_label);
 file = load([region_areas_filename '.mat']);
 
 out = {file.us_area file.lat_coords file.long_coords};
+
+check_for_warnings(file);
 
 end
 
@@ -561,6 +585,8 @@ file = load([region_mask_filename '.mat']);
 
 out = {file.is_in_us file.lat_coords file.long_coords};
 
+check_for_warnings(file);
+
 end
 
 
@@ -579,5 +605,38 @@ file = load([region_outline_filename '.mat']);
 
 out = {file.lats file.longs};
 
+check_for_warnings(file);
+
+end
+
+
+
+
+
+
+
+function check_for_warnings(file)
+
+% no warning info present
+if ~isfield(file, 'debug_info') || ~isfield(file.debug_info, 'warnings')  
+    return;
+end
+
+warnings = file.debug_info.warnings;
+if isempty(warnings)    % no actual warnings present
+    return;
+end
+
+% Display the warnings
+try
+    display('The following warnings from data generation were found in the file:');
+    for w = 1:length(warnings)
+        display(warnings{w});
+    end
+catch err
+    display('Warnings exist but they could not be displayed:');
+    disp(err);
+end
+    
 end
 

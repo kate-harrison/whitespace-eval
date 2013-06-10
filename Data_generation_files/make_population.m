@@ -23,6 +23,9 @@ error_if_region_unsupported('US');
 % year = 2010
 % varargin = {'400x600'}
 
+% Empty cell array to hold any warnings we may encounter
+warnings = {};
+
 
 %% Load existing data
 map_size = population_label.map_size;
@@ -42,6 +45,12 @@ year = str2num(year);
 
 tract_info = load_tract_info(year);
 
+if ~isfield(tract_info, 'pop_density')
+    warnings{end+1} = ['Tract info does not have per-tract population density ' ...
+        'information so we will not be able to compute the max. and min. ' ...
+        'population density maps. Instead, the maps will be filled with -1.'];
+end
+
 %% Create bounding boxes for the polygons
 for i = 1:length(tract_info)
     tract_info(i).max_lat = max(tract_info(i).lats);
@@ -58,7 +67,6 @@ tic
 population = is_in_us * 0.0;
 min_pop_density = is_in_us * inf;
 max_pop_density = is_in_us * -1;
-
 
 
 lat_half_width = (lat_coords(2) - lat_coords(1))/2;

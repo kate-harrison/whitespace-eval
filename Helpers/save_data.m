@@ -81,10 +81,21 @@ end
 %% Add some debug information to the file
 
 try
+    warnings = evalin('caller', 'warnings');
+    has_warnings = true;
+catch
+    has_warnings = false;
+end
+
+
+try
     % Compile the debug information
     debug_info.stacktrace = dbstack('-completenames');
     debug_info.creation_date = datestr(now);
     % debug_info.config = get_simulation_config();
+    if has_warnings
+        debug_info.warnings = warnings;
+    end
     
     
     % Append it to the file
