@@ -71,6 +71,8 @@ switch(variable_name)
     
 % BEGIN LOCALIZATION
     case 'region_code', value = 'US';   % select the version (US vs. AUS)
+        % Note: if you change this, you will need to re-run 'run_me_first'
+        % to set the path correctly.
         
     case 'minmax_lat',
         switch(get_simulation_value('region_code'))
@@ -239,13 +241,16 @@ switch(variable_name)
 
 % BEGIN DIRECTORIES     (should NOT include trailing /)
     case 'data_dir',    % base directory for generated data
-        value = 'Data';
+%         value = 'Data';
+        value = ['Data/' upper(get_simulation_value('region_code'))];
         
     case 'population_data_dir', % base directory for population data
-        value = 'Population_and_tower_data/Population';
+        value = [get_simulation_value('data_dir') ...
+            '/Population_and_tower_data/Population'];
         
     case 'tower_data_dir',  % base directory for raw tower assignment data
-        value = 'Population_and_tower_data/Tower';
+        value = [get_simulation_value('data_dir') ...
+            '/Population_and_tower_data/Tower'];
 % END DIRECTORIES
 
 
