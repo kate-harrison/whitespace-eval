@@ -382,7 +382,7 @@ tower_year = jam_label.tower_data_year;
 
 
 % Load the chan_data
-[chan_data chan_data_indices] = load_chan_data(tower_year);
+[chan_data chan_data_indices] = get_tower_data(tower_year);
 chan_data_indices.pop_density_idx = max(cell2mat(struct2cell(chan_data_indices))) + 1;
 
 num_points = get_jam_level(jam_label, 1e3, 100, 21, 0, 0);    % with rp = 0, this will give us the number of points in r_array
