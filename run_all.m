@@ -31,7 +31,7 @@ pause;
 
 
 %% Set up the path and make necessary directories
-status_msg('Setting up path, directories, and defaults');
+wrap_display_msg('Setting up path, directories, and defaults');
 run_me_first;
 
 %% Define global variables
@@ -39,7 +39,7 @@ global map_size chars pop_year tower_year tv_channels cr_channels ...
     population_type p_array r_array jam_models jam_taxes;
 
 %% We'll use the default map size and census year
-% status_msg('Choose default parameters');
+% wrap_display_msg('Choose default parameters');
 map_size = get_simulation_value('map_size');
 pop_year = get_simulation_value('pop_data_year');
 tower_year = get_simulation_value('tower_data_year');
@@ -49,7 +49,7 @@ population_type = combine_flag('real', pop_year);
 
 
 %% These are the different characteristics to evaluate
-% status_msg('Define CR characteristics of interest');
+% wrap_display_msg('Define CR characteristics of interest');
 chars_temp(1) = generate_label('char', 30, 4);
 % chars_temp(2) = generate_label('char', 10.1, 4);
 % chars_temp(3) = generate_label('char', 30, 100e-3);
@@ -71,18 +71,18 @@ jam_models = 1:4;
 jam_taxes = .5;
 
 %% Make descretized US map and area
-status_msg('Making US maps');
+wrap_display_msg('Making US maps');
 region_mask_label = generate_label('region_mask', map_size);
 make_data(region_mask_label);
 region_areas_label = generate_label('region_areas', map_size);
 make_data(region_areas_label);
 
 %% Read and process the TV tower data
-status_msg('Reading tower data');
+wrap_display_msg('Reading tower data');
 read_tower_data(tower_year);
 
 %% Read and process the population data
-status_msg('Making population data');
+wrap_display_msg('Making population data');
 make_pop_info(pop_year);
 make_tract_info(pop_year);
 population_label = generate_label('population', 'raw', population_type, map_size);
@@ -90,23 +90,23 @@ make_population(population_label);
 get_tower_nearby_pops(pop_year, tower_year);
 
 %% Miscellaneous
-status_msg('Making miscellaneous files');
+wrap_display_msg('Making miscellaneous files');
 make_colors();
 make_plot_parameters();
 region_outline_label = generate_label('region_outline', map_size);
 make_region_outline(region_outline_label);
 
 %% Make masks (FM and FCC)
-status_msg('Making FCC and fade-margin masks');
+wrap_display_msg('Making FCC and fade-margin masks');
 make_masks();
 
 %% Make noise (from TV towers) data
-status_msg('Making TV noise maps');
+wrap_display_msg('Making TV noise maps');
 make_noise_maps();
 
 %% Make the MAC tables (for use in capacities)
 % Time: approx. 10 seconds per set of characteristics
-status_msg('Making MAC tables');
+wrap_display_msg('Making MAC tables');
 make_mac_tables();
 
 %% Make basic capacities
@@ -122,28 +122,28 @@ make_mac_tables();
 %   + single_user: 30 seconds?
 %   + per_area (includes per_person, raw): 10 minutes?
 % Total time: 4*(30 seconds) + 4*(10 minutes) = ~42 minutes
-status_msg('Making basic capacities');
+wrap_display_msg('Making basic capacities');
 make_basic_capacities();
 make_basic_capacities_extra();
 
 %% NEED TO MAKE PRE-HEX FILES
-status_msg('Precomputing hexagon data');
+wrap_display_msg('Precomputing hexagon data');
 make_hex_files();
 
 %% Make hex capacities
-status_msg('Making hex capacities');
+wrap_display_msg('Making hex capacities');
 make_hex_capacities();
 
 %% Make CCDF points
-status_msg('Making CCDF points');
+wrap_display_msg('Making CCDF points');
 make_ccdfs();
 
 %% Precompute for map-level secondary self-interference
-status_msg('Precomputing for map-level secondary self-interference');
+wrap_display_msg('Precomputing for map-level secondary self-interference');
 make_pathloss_squares();
 
 %% Make jam data and capacities
-status_msg('Making jam data and capacities');
+wrap_display_msg('Making jam data and capacities');
 make_jam_capacities();
 
 
@@ -194,7 +194,7 @@ disp(' ');
 end
 
 
-function [] = status_msg(msg)
+function [] = wrap_display_msg(msg)
 
 global screen_width;
 
