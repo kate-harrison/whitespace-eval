@@ -114,7 +114,8 @@ switch(variable_name)
             otherwise,
                 error(['Unsupported region code: ' ...
                     get_simulation_value('region_code')]);
-        end% END LOCALIZATION
+        end
+% END LOCALIZATION
       
 
 % BEGIN SIMULATION PARAMETERS

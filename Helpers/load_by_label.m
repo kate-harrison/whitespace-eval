@@ -187,8 +187,6 @@ function [out] = load_char_by_label(char_label)
 out{1} = char_label.height;
 out{2} = char_label.power;
 
-check_for_warnings(file);
-
 end
 
 
