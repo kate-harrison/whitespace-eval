@@ -46,7 +46,8 @@ switch(lower(label_type))
         label = generate_label('population', 'raw', 'real', map_size);
     otherwise,
         error(['Unrecognized label type: ' label_type ...
-            '; acceptable label types: ' get_simulation_value('labels')]);
+            '; acceptable label types: ' get_simulation_value('labels') ...
+            '. Note that not all label types are supported by this function.' ]);
 end
 
 end

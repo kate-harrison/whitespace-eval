@@ -30,7 +30,7 @@ leak = 1/(10^(dB_leak/10)); % We will multiply the adjacent channel noise by thi
 
 
 % Load the tower data
-[chan_data chan_data_idcs] = load_chan_data(tower_data_year);
+[chan_data chan_data_idcs] = get_tower_data(tower_data_year);
 chan_no_idx = chan_data_idcs.chan_no_idx;
 lat_idx = chan_data_idcs.lat_idx;
 long_idx = chan_data_idcs.long_idx;
