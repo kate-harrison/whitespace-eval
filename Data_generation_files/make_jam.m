@@ -461,8 +461,11 @@ p = jam_label.p;
 bpsHz = jam_label.tax;
 cr_haat = jam_label.char_label.height;
 
+cochannel_separation_dist = get_simulation_value('cochannel_separation_distance');
+
 % Copied from Toys/dyspan2011/jam4.m on 24 Feb 2011
 % Cleaned up on 24 May 2011
+% Changed to general version for cochannel separation dist. on 11 June 2013
 
 %% Set up the simulation
 
@@ -481,7 +484,11 @@ min_r = rp+0.1;
 max_r = rp + 750;
 r_array = [min_r:spacing/m:(min_r+n*spacing) (min_r+(n+1)*spacing):spacing:max_r];
 % if (model_number ~= 5)
-r_array = sort([r_array rp+13.7 rp+15]);
+% r_array = sort([r_array rp+13.7 rp+15]);
+extra_spacing = (spacing/m)/2;
+r_array = sort([r_array (rp+cochannel_separation_dist+extra_spacing) ...
+    (rp+cochannel_separation_dist-extra_spacing)]);
+
 % end
 
 % Set up cell area and distance between secondaries according to the local
