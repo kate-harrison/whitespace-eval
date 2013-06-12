@@ -91,6 +91,10 @@ switch(cell_model)
             error(['Can only use range_type=p for now. You tried range_type=' range_type]);
         end
         
+        if ~string_is(capacity_label.capacity_type, 'per_area')
+            error('Can only create per-area hex capacity (but can load any type).');
+        end
+
         p = capacity_label.range_value;
         [extras.raw_capacity extras.raw_capacity_from_avg extras.min_capacity ...
             extras.area_map extras.capped_map] = get_raw_capacity_hex(capacity_label);

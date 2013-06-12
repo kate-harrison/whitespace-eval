@@ -666,9 +666,8 @@ options.scale = 0:get_max_val(excl_map);
 make_map(excl_map, options);
 
 % What do we lose on top of FCC exclusions?
-map_size = '200x300';
-file = load('FCC_MASK device_type=cr-2011 map_size=200x300');
-fcc_mask = file.mask;
+fcc_label = generate_label('fcc_mask', 'cr', map_size, false);
+fcc_mask = load_by_label(fcc_label);
 new_excl = (fcc_mask == 1) & (get_metro_area_exclusions(map_size) == 0);
 total_new_excl = aggregate_bands(new_excl);
 options.filename = 'Thesis/EXCLUSIONS metro areas additional';

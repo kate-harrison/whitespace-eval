@@ -17,6 +17,8 @@ function [excl_mask] = get_metro_area_exclusions(map_size, varargin)
 % Which is linked from a post on 7/20/2011 on
 %   http://www.fcc.gov/encyclopedia/white-space-database-administration-q-page
 
+error_if_region_unsupported('US');
+
 if ~isempty(varargin)
     display(' ------- FORMAT ------- ');
     display('METROPOLITAN AREA NAME');

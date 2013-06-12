@@ -42,6 +42,8 @@ function [excl_mask] = get_radio_astr_exclusions(map_size, varargin)
 %           Sugar Grove, WV are 38° 30? 58? N Latitude and 79° 16? 48? W
 %           Longitude.
 
+error_if_region_unsupported('US');
+
 if nargin >= 3 && varargin{2}
     display(' ------- FORMAT ------- ');
     display('NAME (LOCATION)');
