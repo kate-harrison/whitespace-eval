@@ -226,6 +226,7 @@ function [out] = load_fm_mask_by_label(fm_mask_label)
 if (~data_exists(fm_mask_label))
     make_fm_mask(fm_mask_label);
 end
+
 fm_mask_filename = generate_filename(fm_mask_label);
 file = load([fm_mask_filename '.mat']);
 
@@ -247,7 +248,7 @@ function [out] = load_jam_by_label(jam_label)
 %        = load_hex_by_label(hex_label)
 
 if (~data_exists(jam_label))
-    error('Jam data does not exist');
+    make_data(jam_label);
 end
 
 jam_filename = generate_filename(jam_label);
