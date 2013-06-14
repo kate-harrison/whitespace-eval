@@ -17,7 +17,7 @@ capacity = load_by_label(capacity_label);
 if (ischar(exclusions_label) && strcmp(exclusions_label, 'none'))
     exclusion_mask = ones(size(capacity));
 else
-    if ~string_is(exclusions_label.type, 'fcc_mask')
+    if ~string_is(exclusions_label.label_type, 'fcc_mask')
         error('This function only supports FCC masks at this time.');
     end
     
