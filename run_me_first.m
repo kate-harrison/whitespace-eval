@@ -27,10 +27,11 @@ end
 
 
 %% Create the directories Data/ and Output/ if they don't already exist
-for i = 1:2
+for i = 1:3
     switch(i)
-        case 1, dir_name = 'Data';
+        case 1, dir_name = get_simulation_value('data_dir');
         case 2, dir_name = 'Output';
+        case 3, dir_name = get_simulation_value('temp_dir');
     end
     
     if (exist(dir_name, 'dir') ~= 7)

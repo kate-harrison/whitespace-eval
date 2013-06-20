@@ -149,7 +149,7 @@ for a = 1:length(area_array)
     end
     
     
-filename = ['Data/' generate_filename(hex_label) ' checkpoint=' num2str(a) '.mat'];
+filename = save_temp_filename(hex_label, ['checkpoint=' num2str(a)]);
 save_data(filename, 'noises', 'signals', 'num_points');
 
 end

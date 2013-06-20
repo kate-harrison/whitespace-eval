@@ -43,6 +43,7 @@ function [varargout] = get_simulation_value(variable_name)
 %   data_dir - base directory for generated data
 %   population_data_dir - base directory for raw population data
 %   tower_data_dir - base directory for raw tower assignment data
+%   temp_dir - directory for storing temporary files
 %
 % MISCELLANEOUS
 %   labels - labels used within this code base
@@ -252,6 +253,9 @@ switch(variable_name)
     case 'tower_data_dir',  % base directory for raw tower assignment data
         value = [get_simulation_value('data_dir') ...
             '/Population_and_tower_data/Tower'];
+        
+    case 'temp_dir',
+        value = [get_simulation_value('data_dir') '/TEMP'];
 % END DIRECTORIES
 
 
