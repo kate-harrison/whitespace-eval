@@ -236,14 +236,18 @@ fcc_mask_label.device_type = device_type;
 fcc_mask_label.map_size = map_size;
 
 % Figure out the correct value for 'apply_wireless_mic_exclusions'
-if ~isempty(varargin)   % if the user specified some value, use it (we will validate later)
-    fcc_mask_label.apply_wireless_mic_exclusions = varargin{1};
-else    % user did not specify => use default value
-    fcc_mask_label.apply_wireless_mic_exclusions = ...
-        get_simulation_value('apply_wireless_mic_exclusions');
-    soft_warning('Using the default choice for wireless mic exclusions.');
+[dev_type year] = split_flag(fcc_mask_label.device_type);
+if string_is(dev_type, 'tv')
+    fcc_mask_label.apply_wireless_mic_exclusions = false;
+else
+    if ~isempty(varargin)   % if the user specified some value, use it (we will validate later)
+        fcc_mask_label.apply_wireless_mic_exclusions = varargin{1};
+    else    % user did not specify => use default value
+        fcc_mask_label.apply_wireless_mic_exclusions = ...
+            get_simulation_value('apply_wireless_mic_exclusions');
+        soft_warning('Using the default choice for wireless mic exclusions.');
+    end
 end
-    
 
 end
 
