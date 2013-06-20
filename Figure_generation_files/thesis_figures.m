@@ -1123,11 +1123,11 @@ end
 
 close all;
 lw = 2;
-scale = 1e6;
+scale = 1e3;
 scale_text = 'kbps';
 figure; set(gcf, 'outerposition', [159         427        1095         425]);
 for r = 1:length(range_values)
-    loglog(cdf(r).X, 1-cdf(r).Y, 'linewidth', lw);
+    loglog(cdf(r).X/scale, 1-cdf(r).Y, 'linewidth', lw);
     hold all;
 end
 
@@ -1140,7 +1140,7 @@ ylabel('Fraction of population');
 ax = axis;
 axis([10 ax(2) 1e-9 1.5]);
 
-scale_axes('x', 10.^(0:10), 1);
+scale_axes('x', 10.^(-4:10), 1);
 scale_axes('y', 10.^(-14:2:0), 1);
 
 save_plot('png', ['Thesis/MAC_RANGE_COMPARISON per_person ccdf'], 1);
