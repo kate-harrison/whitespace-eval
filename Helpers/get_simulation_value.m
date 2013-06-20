@@ -173,8 +173,8 @@ switch(variable_name)
         % NOTE: when changing the values below, we also need to change some
         % of the values in 'r_array' in make_jam.m (around line 484).
         switch(get_simulation_value('region_code'))
-            case 'US',  value = 14.4;   % km
-            case 'AUS', value = 14.4;   % km
+            case 'US',  value = 11.1;   % km
+            case 'AUS', value = 11.1;   % km
             otherwise,
                 error(['Unsupported region code: ' ...
                     get_simulation_value('region_code')]);
@@ -182,8 +182,8 @@ switch(variable_name)
         
     case 'adjacent_channel_separation_distance',
         switch(get_simulation_value('region_code'))
-            case 'US',  value = 0.74;   % km
-            case 'AUS', value = 0.74;   % km
+            case 'US',  value = 1.2;   % km
+            case 'AUS', value = 1.2;   % km
             otherwise,
                 error(['Unsupported region code: ' ...
                     get_simulation_value('region_code')]);
@@ -277,7 +277,7 @@ switch(variable_name)
 
 % BEGIN VALIDATION
     case 'valid_map_sizes',
-        value = {'200x300', '201x301', '400x600', '800x1200', '1600x2400', ...
+        value = {'200x300', '400x600', '800x1200', '1600x2400', ...
             '20x30', '3200x4800', '100x150'};
 
     case 'valid_region_codes',  value = {'US', 'AUS'};  % US, Australia
