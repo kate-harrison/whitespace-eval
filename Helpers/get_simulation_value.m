@@ -44,6 +44,7 @@ function [varargout] = get_simulation_value(variable_name)
 %   population_data_dir - base directory for raw population data
 %   tower_data_dir - base directory for raw tower assignment data
 %   temp_dir - directory for storing temporary files
+%   misc_dir - directory for storing miscellaneous files without labels
 %
 % MISCELLANEOUS
 %   labels - labels used within this code base
@@ -256,6 +257,9 @@ switch(variable_name)
         
     case 'temp_dir',
         value = [get_simulation_value('data_dir') '/TEMP'];
+        
+    case 'misc_dir',
+        value = [get_simulation_value('data_dir') '/MISC'];
 % END DIRECTORIES
 
 
