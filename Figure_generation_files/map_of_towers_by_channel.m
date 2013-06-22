@@ -1,26 +1,38 @@
-%% Map of towers
-% This file will generate a map of the TV towers and their protected
-% regions for the specified channel.
+function [] = map_of_towers_by_channel(channel, varargin)
+%   [] = map_of_towers_by_channel(channel, [tower_data_year])
+%
+%   This function generates a map of the TV towers and their protected
+%   regions for the specified channel. The optional second argument is the
+%   tower data year. If none is given, the default (as given by
+%   get_simulation_value('tower_data_year')) will be used.
+%
+%   See also: get_simulation_value
 
-clc; clear all; close all;
+
 
 %% Parameters
-channel = 10
-tower_data_year = '2011'
+if nargin > 1
+    tower_data_year = varargin{1};
+else
+    tower_data_year = get_simulation_value('tower_data_year');
+end
 
 num_points_on_circle = 30;
 circle_color = 'b';
 circle_alpha = 0.5;
 
+
 %% Load the tower data
 [chan_data struct] = get_tower_data(tower_data_year);
 struct_to_vars; % "deal" the fieldnames of 'struct' to local variables
+
 
 %% Remove towers on the wrong channel
 keep = chan_data(:, chan_no_idx) == channel;
 chan_data(~keep, :) = [];
 
 num_towers = size(chan_data,1)
+
 
 %% Plot the towers
 close all;
@@ -38,7 +50,7 @@ for t = 1:num_towers
     patch(plot_long, plot_lat, circle_color, 'facealpha', circle_alpha, 'edgealpha', 0);
 end
 
-%% Save the figure
 grid off;
 axis off;
-save_plot('png', ['Towers on channel ' num2str(channel)], 1);
+
+end
