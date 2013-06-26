@@ -189,26 +189,39 @@ end
 function [out] = load_fcc_mask_by_label(fcc_mask_label)
 %   [mask extras] = load_fcc_mask_by_label(fcc_mask_label)
 
+% If it's a CR mask and the user requested that we apply the wireless
+% microphone exclusions...
+[device_type] = split_flag(fcc_mask_label.device_type);
+need_to_apply_mic_exclusions = string_is(device_type, 'cr') ...
+    && fcc_mask_label.apply_wireless_mic_exclusions;
+
+if need_to_apply_mic_exclusions
+    % Load the version that does not apply them
+    fcc_mask_label.apply_wireless_mic_exclusions = false;
+end
+
+% Load the data (generate if necessary)
 if (~data_exists(fcc_mask_label))
     make_fcc_mask(fcc_mask_label);
 end
 fcc_mask_filename = generate_filename(fcc_mask_label);
 file = load([fcc_mask_filename '.mat']);
 
-[device_type] = split_flag(fcc_mask_label.device_type);
 
-% switch(device_type)
-%     case 'cr',
-%         % Take out channels for wireless microphone exclusions
-%         file.extras.mask_pre_mic_channels = file.mask;
-%         [mask file.extras.wireless_mic_channels] = take_out_wireless_mic_channels(file.mask);
-%     case 'tv',
-mask = file.mask;
-%     otherwise,
-%         error(['Unrecognized device type: ' device_type]);
-% end
+if need_to_apply_mic_exclusions
+    % Apply the mic exclusions
+    mask = file.extras.mic_removed.mask;
+    file.extras.cochannel_mask = file.extras.mic_removed.cochannel_mask;
+    file.extras.wireless_mic_channels = ...
+        file.extras.mic_removed.wireless_mic_channels;
+else
+    mask = file.mask;
+end
 
-
+% All relevant data from this field has been copied over if necessary so
+% there is no need to return it.
+file.extras = rmfield(file.extras, 'mic_removed');
+    
 out{1} = mask;
 out{2} = file.extras;
 
