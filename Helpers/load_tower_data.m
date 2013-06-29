@@ -7,7 +7,7 @@ function [chan_data chan_no_idx lat_idx long_idx haat_idx erp_idx fcc_rp_idx dis
 %   See also: get_tower_data
 
 
-warning('Use fuction load_chan_data() instead.');
+warning('Use fuction get_tower_data() instead.');
 
 switch(tower_data_year)
     case '2011',

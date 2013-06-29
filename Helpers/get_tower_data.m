@@ -2,15 +2,25 @@ function [chan_data idcs] = get_tower_data(tower_data_year)
 %   [tower_data idcs] = get_tower_data(tower_data_year)
 %
 %   Loads tower data for the specified tower data year. The region is
-%   specified via the region code in Helpers/get_simulation_value.m.
+%   specified via the region code in Helpers/get_simulation_value.m.%
 %
-%   See also: get_simulation_value
+%   Note: the value at ad_idx (analog vs. digital entry) will be
+%   represented as an integer even though the natural representation is 'A'
+%   or 'D'. It is automatically cast to an integer because the rest of the
+%   matrix holds numbers. This value (A = 65, D = 68) will be correctly
+%   interpreted in switch statements (see, for example,
+%   get_AD_protection_radius) but will need to be cast to a character
+%   before other functions like string_is will work properly.
+%
+%   See also: get_simulation_value, get_AD_protection_radius, char,
+%   string_is
 
 switch(get_simulation_value('region_code'))
     case 'US',
         switch(tower_data_year)
-            case '2011',
-                load([get_simulation_value('data_dir') '/chan_data2011.mat']);
+            case get_simulation_value('valid_tower_data_years'),
+                load([get_simulation_value('data_dir') '/chan_data' ...
+                    tower_data_year '.mat']);
                 idcs = struct('ad_idx', ad_idx, 'chan_no_idx', chan_no_idx, ...
                     'lat_idx', lat_idx, 'long_idx', long_idx, ...
                     'haat_idx', haat_idx, 'erp_idx', erp_idx, ...

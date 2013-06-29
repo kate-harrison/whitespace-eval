@@ -1,31 +1,32 @@
-function [] = read_tower_data(year)
-%   [] = read_tower_data(year)
+function [] = parse_tower_data(year)
+%   [] = parse_tower_data(year)
 %
 %   Parses the .txt file containing the tower data and outputs to
-%   [get_simulation_value('data_dir') '/chan_data2011.mat']
+%   [get_simulation_value('data_dir') '/chan_data' year '.mat']
 %
 %   NOTE: Currently this file works for the US only.
 %
 %   See also: get_simulation_value
 
-
-switch(get_simulation_value('region_code'))
-    case 'US',
-    otherwise,
-        error('Unsupported region code.');
-end
+error_if_region_unsupported('US');
 
 % Make sure we have data for the specified year
-if (~string_is(year, '2011'))
-    error(['Unsupported tower data year: ' year]);
+switch(year)
+    case get_simulation_value('valid_tower_data_years'),
+    otherwise,
+        error(['Unsupported tower data year: ' year]);
 end
 
+
 %% Process the tower data
-filename = [get_simulation_value('data_dir') '/chan_data2011.mat'];
+filename = [get_simulation_value('data_dir') '/chan_data' year '.mat'];
+
 % If we don't need to compute, exit now
 if (get_compute_status(filename) == 0)
     return;
 end
+
+data_filename = [get_simulation_value('tower_data_dir') '/' year '/tvq_licensed_only.txt']
 
 %% File location and format
 % Source: http://transition.fcc.gov/mb/video/tvq.html. Use the following
@@ -90,8 +91,9 @@ end
 
 %% Load the file
 % Import the data
-file = importdata('tvq_licensed_only.txt');
-
+% file = importdata(data_filename, '|');
+data = parse_data(data_filename);
+% return
 
 % Access information for tower |i| with
 %
@@ -191,25 +193,29 @@ height(1) = height(1) + small;
 height(length(height)) = height(length(height)) - small;
 
 
-num_entries = size(file.data, 1);
+% num_entries = size(file.data, 1);
+num_entries = length(data)
 
 % Output matrix
 chan_data = zeros(num_entries, num_cols);
 chan_data(:, dist_th_idx) = inf;
+
 
 for i = 1:num_entries
     if (mod(i, 500) == 0)
         display(['Working on tower ' num2str(i) ' out of ' num2str(num_entries)]);
     end
     
+    entry = data{i};
+    
     % Channel number
-    chan_data(i, chan_no_idx) = str2num(cell2mat(file.textdata(i, col.channel)));
+    chan_data(i,chan_no_idx) = str2double(entry{col.channel});
     
     % Find the type of service (analog vs. digital vs. distributed digital)
     % Note that chan_data(i, ad_idx) is actual the ASCII code for the
     % character assigned to it (to get the character back, use
     % char(chan_data(i, ad_idx)).
-    switch(strtrim(cell2mat(file.textdata(i, col.service_type))))
+    switch(strtrim(entry{col.service_type}))
         case {'DT', 'DC', 'LD', 'DS', 'DX'} % digital
             chan_data(i, ad_idx) = 'D';
         case {'CA', 'TX', 'TS'} % analog
@@ -223,25 +229,25 @@ for i = 1:num_entries
     end
     
     % Convert the latitude data into the decimal representation of the latitude
-    switch(strtrim(cell2mat(file.textdata(i, col.lat_dir))))
+    switch(strtrim(entry{col.lat_dir}))
         case 'N', lat.sign = 1;
         case 'S', lat.sign = -1;
         otherwise, error('Couldn''t read latitude sign!');
     end
-    lat.deg = str2num(cell2mat(file.textdata(i, col.lat_deg)));
-    lat.min = str2num(cell2mat(file.textdata(i, col.lat_min)));
-    lat.sec = str2num(cell2mat(file.textdata(i, col.lat_sec)));
+    lat.deg = str2double(entry{col.lat_deg});
+    lat.min = str2double(entry{col.lat_min});
+    lat.sec = str2double(entry{col.lat_sec});
     lat.dec = lat.sign*(lat.deg + lat.min/60 + lat.sec/3600);
     
     % Convert the longitude data into the decimal representation of the latitude
-    switch(strtrim(cell2mat(file.textdata(i, col.long_dir))))
+    switch(strtrim(entry{col.long_dir}))
         case 'E', long.sign = 1;
         case 'W', long.sign = -1;
         otherwise, error('Couldn''t read longitude sign!');
     end
-    long.deg = str2num(cell2mat(file.textdata(i, col.long_deg)));
-    long.min = str2num(cell2mat(file.textdata(i, col.long_min)));
-    long.sec = str2num(cell2mat(file.textdata(i, col.long_sec)));
+    long.deg = str2double(entry{col.long_deg});
+    long.min = str2double(entry{col.long_min});
+    long.sec = str2double(entry{col.long_sec});
     long.dec = long.sign*(long.deg + long.min/60 + long.sec/3600);
     
     % Save latitude and longitude data
@@ -249,7 +255,7 @@ for i = 1:num_entries
     chan_data(i, long_idx) = long.dec;
     
     % Preprocess the height to be an appropriate amount
-    ht = str2num(cell2mat(file.textdata(i, col.HAAT)));
+    ht = str2double(entry{col.HAAT});
     if (ht <= min_haat)
         ht = min(height);
     end
@@ -262,12 +268,12 @@ for i = 1:num_entries
     % Splits into a cell array indexed as:
     %   split_str{1} = magnitude
     %   split_str{2} = units
-    split_str = regexp(cell2mat(file.textdata(i, col.ERP_kW)), '[ ]+', 'split');
+    split_str = regexp(entry{col.ERP_kW}, '[ ]+', 'split');
     % Make sure that it is always specified in kW
     switch(split_str{2})    % units
         case 'kW',  % do nothing
         otherwise,
-            display(cell2mat(file.textdata(i,col.ERP_kW)));
+            display(entry{col.ERP_kW});
             error(['Wrong units: ' split_str{3}]);
     end
     % Save the ERP (in kW)
@@ -281,13 +287,13 @@ for i = 1:num_entries
     %     chan_data(i, dist_th_idx) = get_effective_radius(chan_data(i, erp_idx), ...
     %         chan_data(i, chan_no_idx), chan_data(i, haat_idx), threshold);
     
+    % Calculate the FCC protected region radius
     chan_data(i, fcc_rp_idx) = get_AD_protection_radius( ...
         chan_data(i, erp_idx)*1e3, ...    % need this in W
         chan_data(i, chan_no_idx), ...
         chan_data(i, haat_idx), ...
-        chan_data(i, ad_idx) ...
+        chan_data(i, ad_idx) ...    
         );
-    
     
     
 end
@@ -346,4 +352,24 @@ chan_data(~in_vec, :) = [];
 
 save_data(filename, 'chan_data', 'chan_no_idx', 'lat_idx', 'long_idx', ...
     'haat_idx', 'erp_idx', 'dist_th_idx', 'fcc_rp_idx', 'ad_idx');
+add_extended_info_to_file(filename, 'get_AD_protection_radius');
+end
+
+
+function [data] = parse_data(filename)
+% This function reads in each line of the pipe-delimited file.
+
+fid = fopen(filename);
+
+data = {};
+while ~feof(fid)
+    line = fgetl(fid);
+    if isempty(line)
+        continue;
+    end
+    data{end+1} = regexp(line, '\|', 'split');
+end
+
+fclose(fid);
+
 end

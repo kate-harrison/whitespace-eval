@@ -196,9 +196,9 @@ switch(variable_name)
     case 'tower_data_year',
         switch(get_simulation_value('region_code'))
             case 'US',
-                % Valid options: 2008, 2011; must be string to allow for
+                % Valid options: 2011, 2013; must be string to allow for
                 % 2011a (for example)
-                value = '2011';
+                value = '2013';
             case 'AUS',
                 value = '2012';
                 warning(['The Australian tower data is not guaranteed to '...
@@ -290,7 +290,7 @@ switch(variable_name)
     case 'valid_tower_data_years',
         switch(get_simulation_value('region_code'))
             case 'US',
-                value = {'2011'};
+                value = {'2011', '2013'};
             case 'AUS',
                 value = {'2012'};
                 warning(['The Australian tower data is not guaranteed to '...
