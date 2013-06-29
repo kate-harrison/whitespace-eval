@@ -34,8 +34,7 @@ temp_noise_label = generate_label('noise', 'yes', noise_label.map_size, ...
     noise_label.channels, 'none');
 temp_noise_filename = save_filename(temp_noise_label);
 if (exist(temp_noise_filename, 'file') == 2)
-    load(temp_noise_filename);
-    noise_data = noise;
+    noise_data = load_by_label(temp_noise_label);
 else
     %% Load external data
     
@@ -143,9 +142,7 @@ else
         
     end
     
-    noise_data = noise;
-    clear noise;
-    save_data(save_filename(temp_noise_label));
+    save_data(save_filename(temp_noise_label), 'noise');
     add_extended_info_to_file(save_filename(temp_noise_label), 'read_tower_data');
 end
 
@@ -216,9 +213,7 @@ if (strcmp(leakage_type, 'both') == 1 || strcmp(leakage_type, 'down') == 1)
     end
 end
     
-    
-
 noise = cochannel_noise + adj_channel_noise*leak;
 save_data(save_filename(noise_label), 'noise');
-add_extended_info_to_file(save_filename(temp_noise_label), 'read_tower_data');
+add_extended_info_to_file(save_filename(noise_label), 'read_tower_data');
 end
