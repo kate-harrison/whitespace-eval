@@ -1,11 +1,26 @@
-function [] = add_extended_info_to_file(filename, varargin)
+function [] = add_extended_info_to_file(data_filename, varargin)
+%   [] = add_extended_info_to_file(data_filename, [file1], [file2], ...)
+%
+%   This file is meant to be used on a data file that has been saved with
+%   the function save_data(). It will likely fail on other files.
+%
+%   With only its required argument, this function will automatically
+%   attempt to add the source code for the files in the stack trace
+%   (contained in file.debug_info.stacktrace).
+%
+%   If there are any additional arguments (filenames), this function will
+%   also add the source of the specified files to the file under
+%   file.debug_info.additional_files.
+%   
+%   See also: save_data
+
 
 % Try to load the existing data file
 try
-    load(filename, 'debug_info');
+    load(data_filename, 'debug_info');
 catch error
     display(error)
-    display(['Could not load ' filename '; aborting add_extended_info_to_file().']);
+    display(['Could not load ' data_filename '; aborting add_extended_info_to_file().']);
     return
 end
 
@@ -44,7 +59,7 @@ if ~isempty(varargin)
         end
         
         % Save the contents in additional_files. The fieldname will be a
-        % sanitized version of the filename.
+        % sanitized version of the data_filename.
         sanitized_filename = regexprep(temp_filename, '/', '__');
         sanitized_filename = regexprep(sanitized_filename, '\.', '_');
         additional_files.(sanitized_filename) = contents;
@@ -57,9 +72,9 @@ end
 
 % Overwrite the debug_info in the original file
 try
-    save(filename, '-append', 'debug_info');
+    save(data_filename, '-append', 'debug_info');
 catch error
     display(error);
-    display(['Could not add extended debug info to ' filename]);
+    display(['Could not add extended debug info to ' data_filename]);
 end
 end
