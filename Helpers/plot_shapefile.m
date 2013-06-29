@@ -35,11 +35,18 @@ end
 
 [S,A] = shaperead(new_filename, 'usegeocoords', true);
 
+
 fig_handle = gcf;
 grid on; hold on;
 
 for i = 1:length(S)
-
+    % If it's just a point, plot that and continue
+    if string_is(S(i).Geometry, 'Point')
+        plot(S(i).Lon, S(i).Lat, 'b.', 'markersize', 10);
+        continue;
+    end
+    
+    % If it's a patch...
     idcs = [0 find(isnan(S(i).Lon))];
 
     for j = 1:length(idcs)-1
