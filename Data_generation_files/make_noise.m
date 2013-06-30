@@ -34,7 +34,7 @@ temp_noise_label = generate_label('noise', 'yes', noise_label.map_size, ...
     noise_label.channels, 'none');
 temp_noise_filename = save_filename(temp_noise_label);
 if (exist(temp_noise_filename, 'file') == 2)
-    noise_data = load_by_label(temp_noise_label);
+    noise = load_by_label(temp_noise_label);
 else
     %% Load external data
     
@@ -157,7 +157,7 @@ switch(cochannel)
         switch(channels)
             case 'tv',
                 % TNP only but 49 channels
-                cochannel_noise = get_us_map(map_size, size(noise_data,1))*TNP;
+                cochannel_noise = get_us_map(map_size, size(noise,1))*TNP;
             case '52',
                 % Thermal noise only (one channel)
                 cochannel_noise = get_us_map(map_size, 1)*TNP;
@@ -169,7 +169,7 @@ switch(cochannel)
         switch(channels)
             case 'tv',
                 % Load TV channel noise
-                cochannel_noise = noise_data;
+                cochannel_noise = noise;
             case '52',
                 % Load channel 52 noise (just TNP for now)
                 cochannel_noise = get_us_map(map_size, 1)*TNP;
@@ -197,7 +197,7 @@ if (strcmp(leakage_type, 'both') == 1 || strcmp(leakage_type, 'up') == 1)
         end
         up_ch_idx = i+1;
         adj_channel_noise(i, :, :) = adj_channel_noise(i, :, :) + ...
-            noise_data(up_ch_idx, :, :);   % Add noise from the upper neighbor
+            noise(up_ch_idx, :, :);   % Add noise from the upper neighbor
     end
 end
 
@@ -209,10 +209,13 @@ if (strcmp(leakage_type, 'both') == 1 || strcmp(leakage_type, 'down') == 1)
         end
         dn_ch_idx = i-1;
         adj_channel_noise(i, :, :) = adj_channel_noise(i, :, :) + ...
-            noise_data(dn_ch_idx, :, :);   % Add noise from the lower neighbor
+            noise(dn_ch_idx, :, :);   % Add noise from the lower neighbor
     end
 end
     
+% The variable 'noise' will change values/meanings in the following line so
+% clearing it first makes this process more obvious
+clear noise
 noise = cochannel_noise + adj_channel_noise*leak;
 save_data(save_filename(noise_label), 'noise');
 add_extended_info_to_file(save_filename(noise_label), 'read_tower_data');
