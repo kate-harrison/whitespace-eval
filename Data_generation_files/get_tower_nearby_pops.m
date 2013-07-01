@@ -13,7 +13,7 @@ if ~(exist(filename, 'file') == 2)
     
     display(['Working on... ' filename]);
     
-    [chan_data chan_data_indices] = load_tower_data(tower_year);
+    [chan_data chan_data_indices] = get_tower_data(tower_year);
     lats = chan_data(:, chan_data_indices.lat_idx);
     longs = chan_data(:, chan_data_indices.long_idx);
     rps = chan_data(:, chan_data_indices.fcc_rp_idx);
