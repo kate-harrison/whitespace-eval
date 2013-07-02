@@ -220,7 +220,9 @@ end
 
 % All relevant data from this field has been copied over if necessary so
 % there is no need to return it.
-file.extras = rmfield(file.extras, 'mic_removed');
+if isfield(file.extras, 'mic_removed')
+    file.extras = rmfield(file.extras, 'mic_removed');
+end
     
 out{1} = mask;
 out{2} = file.extras;

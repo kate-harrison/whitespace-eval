@@ -24,7 +24,7 @@ PRIVATE_field_names = fieldnames(struct);
 
 for PRIVATE_fn = 1:length(PRIVATE_field_names)
     PRIVATE_field_name = PRIVATE_field_names{PRIVATE_fn};
-    eval([PRIVATE_field_name ' = struct.(PRIVATE_field_name)']);
+    eval([PRIVATE_field_name ' = struct.(PRIVATE_field_name);']);
 end
 
 clear PRIVATE_*
