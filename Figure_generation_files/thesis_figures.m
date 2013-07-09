@@ -1639,7 +1639,7 @@ end
 
     
 %     save_plot('png', ['Thesis/TV_REMOVAL_' type_text ' p=' num2str(p)]);
-    pause;
+%     pause;
 end
 
 
