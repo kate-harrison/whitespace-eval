@@ -225,7 +225,7 @@ for i = 1:num_entries
             continue;
         otherwise,
             error(['Unknown service type: ''' ...
-                strtrim(cell2mat(file.textdata(i, col.service_type))) '''']);
+                strtrim(entry{col.service_type}) '''']);
     end
     
     % Convert the latitude data into the decimal representation of the latitude
