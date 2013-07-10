@@ -1,5 +1,5 @@
-function [] = parse_tower_data(year)
-%   [] = parse_tower_data(year)
+function [] = read_tower_data(year)
+%   [] = read_tower_data(year)
 %
 %   Parses the .txt file containing the tower data and outputs to
 %   [get_simulation_value('data_dir') '/chan_data' year '.mat']
