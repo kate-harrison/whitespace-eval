@@ -23,7 +23,7 @@ for a = 1:length(axes_list)
     set(ax, 'fontname', font_name);
     
     % X-axis label
-    xlhand = get(ax,'xlabel')
+    xlhand = get(ax,'xlabel');
     set(xlhand, 'fontsize',font_size);
     set(xlhand, 'fontname', font_name);
     
