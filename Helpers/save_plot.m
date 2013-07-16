@@ -16,7 +16,7 @@ load 'plot_parameters.mat'
 %% Format the axes, title, legend, and colorbar
 axes_list = findall(gcf,'type','axes');
 for a = 1:length(axes_list)
-    ax = axes_list(a)
+    ax = axes_list(a);
 
     % Format the axis
     set(ax, 'fontsize', font_size);
@@ -25,12 +25,12 @@ for a = 1:length(axes_list)
     % X-axis label
     xlhand = get(ax,'xlabel')
     set(xlhand, 'fontsize',font_size);
-    set(xlhand, 'fontname', font_name)
+    set(xlhand, 'fontname', font_name);
     
     % Y-axis label
     ylhand = get(ax,'ylabel');
     set(ylhand, 'fontsize',font_size);
-    set(ylhand, 'fontname', font_name)
+    set(ylhand, 'fontname', font_name);
 
     % Format the title
     try
