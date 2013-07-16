@@ -22,15 +22,6 @@ else
     population_type = varargin{1};
 end
 
-split = regexpi(population_type, '-', 'split');
-population_type = split{1};
-if (length(split) < 2)
-    year = get_simulation_value('pop_data_year');
-    soft_warning(['Assuming population year ' num2str(year)]);
-else
-    year = str2double(split{2});
-end
-
 if (num_inputs < 2)
     num_layers = 1;
 else

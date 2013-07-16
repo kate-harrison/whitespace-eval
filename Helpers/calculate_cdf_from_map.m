@@ -15,6 +15,9 @@ function [ cdfX cdfY avg med ] = calculate_cdf_from_map( data_map, population_ma
 %   cdfY - y axis values for the CDF
 %   avg - average of the data
 %   med - median of the data
+%
+%   WARNING: infinite and NaN data will not be counted in the CDF
+%   calculations!
 
 if (ndims(data_map) >= 3)
     error(['Data map can be at most 2-dimensional; number of dimensions: ' ...
