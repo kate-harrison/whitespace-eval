@@ -2,8 +2,8 @@
 
 clc; clear all; close all;
 
-%% Reset Matlab to its default state
-matlabrc;
+%% Reset the Matlab path to its default state
+restoredefaultpath;
 
 
 %% Add the Helpers/ subdirectory to the path
@@ -12,18 +12,11 @@ matlabrc;
 % period in .svn and .git using the \ character.
 addpath('Helpers');
 
-do_not_include = {'\.svn', '\.git', 'html', 'tl_', 'cvx'};
-
-
-%% Exclude all region codes except the current one
-all_region_codes = get_simulation_value('valid_region_codes');
-current_region_code = get_simulation_value('region_code');
-
-for rc = 1:length(all_region_codes)
-    if ~string_is(all_region_codes{rc}, current_region_code)
-        do_not_include{end+1} = ['Data/' all_region_codes{rc}];
-    end
-end
+do_not_include = {'\.svn', '\.git', 'html', 'tl_', 'cvx', 'Data/'};
+% Note: we exclude the Data/ directory here to avoid conflicts (bugs) when
+% data exists for multiple regions. We add the Data/ paths separately
+% below. Note that the trailing / is important to make sure we don't
+% exclude Data_generation_files/.
 
 
 %% Create the directories Data/ and Output/ if they don't already exist
@@ -42,7 +35,7 @@ for i = 1:4
 end
 
 
-%% Create the Data/ directories (one for each label) if they don't already exist
+%% Create the Data/ directories (one for each label) if necessary and add them to the path
 % Get the label names
 labels = get_simulation_value('labels');
 [split] = regexp(labels, ',', 'split'); % the labels are separated by commas
@@ -53,18 +46,23 @@ for s = 1:length(split)
 end
 
 % Determine which directory will hold the new directories and make sure it
-% exists
+% exists; then add it to the path
 dir_name = get_simulation_value('data_dir');
 if ~exist(dir_name, 'dir')
     mkdir(dir_name)
 end
+addpath([pwd '/' dir_name]);
 
-% Make the directories
+% Make the directories and add them to the path
 for i = 1:length(split)
-    if (exist([dir_name '/' split{i}], 'dir') ~= 7 && isempty(regexpi(split{i}, 'char')))
+    if ~isempty(regexpi(split{i}, 'char'))
+        continue;   % skip the CHAR label
+    end
+    if (exist([dir_name '/' split{i}], 'dir') ~= 7)
         display(['Creating directory ' dir_name '/' upper(split{i}) '...']);
         mkdir(dir_name, upper(split{i}));
     end
+    addpath([pwd '/' dir_name '/' upper(split{i})]);
 end
 
 
