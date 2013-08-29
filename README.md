@@ -18,6 +18,11 @@ provided without guarantee. If you build off of it or find it useful,
 please consider citing it.
 
 
+Want to contribute?
+-------------------
+Please feel free to fork this code and send me a pull request if you make any changes you'd like to share with the world. I'm very interested in seeing this code base develop further.
+
+
 Author information
 ------------------
 **Kate Harrison**
