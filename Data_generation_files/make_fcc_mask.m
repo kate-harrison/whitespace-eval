@@ -14,7 +14,8 @@ function [] = make_fcc_mask(fcc_mask_label)
 %   distances are specified in get_simulation_value.
 %
 %   See also: read_tower_data, get_tower_data, get_simulation_value, 
-%       take_out_wireless_mic_channels, load_by_label
+%       take_out_wireless_mic_channels, load_by_label,
+%       combine_cochannel_and_adjacent_channel_exclusions
 %
 %   * Wireless microphone exclusions are computed here but are not included
 %   in the 'mask' variable. See load_by_label to understand how to extract
@@ -170,37 +171,13 @@ for dt = {'tv', 'cr'}
     % Note: saving as .mat version 7.3 is necessary when data is larger
     % than 2GB (e.g. for 3200x4800 maps).
     save_data(filename, 'mask', 'extras', '-v7.3');
-    add_extended_info_to_file(filename, 'get_tower_data');
+    add_extended_info_to_file(filename, 'get_tower_data', ...
+        'combine_cochannel_and_adjacent_channel_exclusions');
 
 end
 
 
 end
-
-
-function [mask] = combine_cochannel_and_adjacent_channel_exclusions(cochannel_mask, adjacent_channel_mask)
-
-% Start with just the cochannel exclusions
-mask = cochannel_mask;
-
-% Get the list of channels
-chan_list = get_simulation_value('chan_list');
-
-% For each channel, apply the adjacent-channel exclusions
-for i = 1:length(chan_list)    
-    % Check for and process an upward-adjacent frequency
-    if (has_frequency_neighbor(i, 'up'))
-        mask(i,:) = mask(i,:) & adjacent_channel_mask(i+1,:);
-    end
-    
-    % Check for and process a downward-adjacent frequency
-    if(has_frequency_neighbor(i, 'down'))
-        mask(i,:) = mask(i,:) & adjacent_channel_mask(i-1,:);
-    end
-end
-
-end
-
 
 
 function [sub_lat_idcs sub_long_idcs box_empty] = select_box(world, center_lat, center_long, radius)
