@@ -206,7 +206,9 @@ if (~data_exists(fcc_mask_label))
 end
 fcc_mask_filename = generate_filename(fcc_mask_label);
 file = load([fcc_mask_filename '.mat']);
-
+if ~isfield(file, 'extras') 
+    file.extras = 'none';
+end
 
 if need_to_apply_mic_exclusions
     % Apply the mic exclusions
@@ -244,6 +246,9 @@ end
 
 fm_mask_filename = generate_filename(fm_mask_label);
 file = load([fm_mask_filename '.mat']);
+if ~isfield(file, 'extras') 
+    file.extras = 'none';
+end
 
 [device_type] = split_flag(fm_mask_label.device_type);
 
