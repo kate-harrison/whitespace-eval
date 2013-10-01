@@ -41,6 +41,7 @@ function [label] = generate_label(varargin)
 %           - type = {'masked', 'full'} (uses 'masked' if none specified)
 %   REGION_MASK: (map_size)
 %   REGION_OUTLINE: (map_size)
+%   TEST: (test_type)
 %
 %
 %   Common inputs:
@@ -115,6 +116,9 @@ switch(varargin{1})
     case 'region_outline',
         num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_region_outline_label(varargin{2:end});
+    case 'test',
+        num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
+        label = generate_test_label(varargin{2:end});
         
     otherwise,
         error(['Unrecognized label type: ''' varargin{1} '''. Acceptable values are: ' accepted_values]);
@@ -480,7 +484,15 @@ region_outline_label.map_size = map_size;
 end
 
 
+% -------------------------------------------------------------------------
+%     TEST
+% -------------------------------------------------------------------------
+function [test_label] = generate_test_label( test_type )
+%   [test_label] = generate_test_label( test_type )
 
+test_label.test_type = test_type;
+
+end
 
 % -------------------------------------------------------------------------
 %     HELPER FUNCTIONS

@@ -11,6 +11,12 @@ function [] = make_ccdf_points(ccdf_points_label)
 %    haven't yet
 %
 
+switch(ccdf_points_label.label_type)
+    case 'ccdf_points',
+    otherwise,
+        error(['Unsupported mode: tried to run make_ccdf_points() with ' ...
+            'label of type ' ccdf_points_label.label_type]);
+end
 
 % If we don't need to compute, exit now
 if (get_compute_status(ccdf_points_label) == 0)

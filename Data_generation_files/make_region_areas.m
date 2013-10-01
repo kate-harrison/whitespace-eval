@@ -8,6 +8,13 @@ function [] = make_region_areas(region_areas_label)
 
 error_if_region_unsupported('US');
 
+switch(region_areas_label.label_type)
+    case 'region_areas',
+    otherwise,
+        error(['Unsupported mode: tried to run make_region_areas() with ' ...
+            'label of type ' region_areas_label.label_type]);
+end
+
 masked_label = region_areas_label;
 masked_label.type = 'masked';
 validate_label(masked_label);

@@ -92,6 +92,8 @@ switch(label.label_type)
         [varargout] = load_region_mask_by_label(label);
     case 'region_outline',
         [varargout] = load_region_outline_by_label(label);
+    case 'test',
+        error('TEST labels do not have associated files.');
     otherwise,
         error(['Unrecognized label: ' label]);
 end

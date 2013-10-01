@@ -6,6 +6,13 @@ function [] = make_region_outline(region_outline_label)
 
 error_if_region_unsupported('US');
 
+switch(region_outline_label.label_type)
+    case 'region_outline',
+    otherwise,
+        error(['Unsupported mode: tried to run make_region_outline() with ' ...
+            'label of type ' region_outline_label.label_type]);
+end
+
 map_size = region_outline_label.map_size;
 filename = save_filename(region_outline_label);
 

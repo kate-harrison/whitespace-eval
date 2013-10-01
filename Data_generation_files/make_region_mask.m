@@ -9,6 +9,13 @@ function [] = make_region_mask(region_mask_label)
 
 error_if_region_unsupported('US');
 
+switch(region_mask_label.label_type)
+    case 'region_mask',
+    otherwise,
+        error(['Unsupported mode: tried to run make_region_mask() with ' ...
+            'label of type ' region_mask_label.label_type]);
+end
+
 switch(get_simulation_value('region_code'))
     case 'US',
         make_us_mask(region_mask_label);

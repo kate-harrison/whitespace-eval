@@ -31,6 +31,8 @@ switch(label.label_type)
         make_region_mask(label);
     case 'region_outline',
         make_region_outline(label);
+    case 'test',
+        error('TEST labels do not have associated data.');
 
     otherwise,
         error(['Unrecognized label type: ''' label.label_type '''. Acceptable values are: ' accepted_values]);

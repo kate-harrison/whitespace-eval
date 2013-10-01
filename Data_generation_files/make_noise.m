@@ -1,6 +1,13 @@
 function [noise] = make_noise(noise_label)
 %   [noise] = make_noise(noise_label)
 
+switch(noise_label.label_type)
+    case 'noise',
+    otherwise,
+        error(['Unsupported mode: tried to run make_noise() with ' ...
+            'label of type ' noise_label.label_type]);
+end
+
 % If we don't need to compute, exit now
 if (get_compute_status(noise_label) == 0)
     return;

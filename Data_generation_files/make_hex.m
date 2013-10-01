@@ -3,6 +3,12 @@ function [] = make_hex(hex_label)
 %
 %   Make hexagon data.
 
+switch(hex_label.label_type)
+    case 'hex',
+    otherwise,
+        error(['Unsupported mode: tried to run make_hex() with ' ...
+            'label of type ' hex_label.label_type]);
+end
 
 wifi = strcmpi(hex_label.type, 'hotspot');
 % wifi = isfield(hex_label, 'wifi') & hex_label.wifi == 1;

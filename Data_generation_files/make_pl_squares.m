@@ -3,6 +3,12 @@ function [] = make_pl_squares(pl_squares_label)
 %
 %   Makes path-loss rectanges.
 
+switch(pl_squares_label.label_type)
+    case 'pl_squares',
+    otherwise,
+        error(['Unsupported mode: tried to run make_pl_squares() with ' ...
+            'label of type ' pl_squares_label.label_type]);
+end
 
 % If we don't need to compute, exit now
 if (get_compute_status(pl_squares_label) == 0)

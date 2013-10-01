@@ -1,6 +1,12 @@
 function [] = make_mac_table(mac_table_label)
 %   [] = make_mac_table(mac_table_label)
 
+switch(mac_table_label.label_type)
+    case 'mac_table',
+    otherwise,
+        error(['Unsupported mode: tried to run make_mac_table() with ' ...
+            'label of type ' mac_table_label.label_type]);
+end
 
 % If we don't need to compute, exit now
 if (get_compute_status(mac_table_label) == 0)

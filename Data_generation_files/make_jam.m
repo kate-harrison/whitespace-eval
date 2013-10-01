@@ -1,13 +1,17 @@
 function [] = make_jam(jam_label)
 %   [] = make_jam(jam_label)
 
+switch(jam_label.label_type)
+    case 'jam',
+    otherwise,
+        error(['Unsupported mode: tried to run make_jam() with ' ...
+            'label of type ' jam_label.label_type]);
+end
 
 % If we don't need to compute, exit now
 if (get_compute_status(jam_label) == 0)
     return;
 end
-
-
 
 
 % Copy to a shorter variable name for readability

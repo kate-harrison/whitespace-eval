@@ -36,6 +36,8 @@ switch(label.label_type)
         validate_region_mask_label(label);
     case 'region_outline',
         validate_region_outline_label(label);
+    case 'test',
+        validate_test_label(label);
     case 'none',
     otherwise,
         accepted_values = get_simulation_value('labels');
@@ -242,5 +244,16 @@ function [] = validate_region_outline_label(region_outline_label)
 %   [] = validate_region_outline_label(region_outline_label)
 
 validate_flags('region_outline', 'map_size', region_outline_label.map_size);
+
+end
+
+
+% -------------------------------------------------------------------------
+%     TEST
+% -------------------------------------------------------------------------
+function [] = validate_test_label(test_label)
+%   [] = validate_test_label(test_label)
+
+% Do nothing
 
 end

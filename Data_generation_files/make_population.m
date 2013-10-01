@@ -13,6 +13,13 @@ function [] = make_population(population_label)
 
 error_if_region_unsupported('US');
 
+switch(population_label.label_type)
+    case 'population',
+    otherwise,
+        error(['Unsupported mode: tried to run make_population() with ' ...
+            'label of type ' population_label.label_type]);
+end
+
 
 % % The statement below is no longer true but you could cleverly adapt them
 % % with a little effort.

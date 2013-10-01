@@ -26,6 +26,13 @@ function [] = make_fcc_mask(fcc_mask_label)
 %   questions above. This will not adversely affect the behavior of
 %   load_by_label().
 
+switch(fcc_mask_label.label_type)
+    case 'fcc_mask',
+    otherwise,
+        error(['Unsupported mode: tried to run make_fcc_mask() with ' ...
+            'label of type ' fcc_mask_label.label_type]);
+end
+
 % Read in the parameters
 [~, tower_data_year] = split_flag(fcc_mask_label.device_type);
 map_size = fcc_mask_label.map_size;

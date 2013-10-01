@@ -7,6 +7,12 @@ function [] = make_fm_mask(fm_mask_label)
 % 1 = can receive TV, 0 = cannot receive TV
 % Execution time: approx. 5 min per margin
 
+switch(fm_mask_label.label_type)
+    case 'fm_mask',
+    otherwise,
+        error(['Unsupported mode: tried to run make_fm_mask() with ' ...
+            'label of type ' fm_mask_label.label_type]);
+end
 
 if (get_compute_status(fm_mask_label)==0)
     return;

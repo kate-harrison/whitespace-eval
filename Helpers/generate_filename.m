@@ -36,6 +36,8 @@ switch(label.label_type)
         filename = generate_region_mask_filename(label);
     case 'region_outline',
         filename = generate_region_outline_filename(label);
+    case 'test',
+        error('TEST labels do not have associated filenames.');
     case 'none',
         filename = 'none';
         

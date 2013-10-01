@@ -1,6 +1,13 @@
 function [] = make_capacity(capacity_label)
 %   [] = make_capacity(capacity_label)
 
+switch(capacity_label.label_type)
+    case 'capacity',
+    otherwise,
+        error(['Unsupported mode: tried to run make_capacity() with ' ...
+            'label of type ' capacity_label.label_type]);
+end
+
 capacity_type = capacity_label.capacity_type;
 range_type = capacity_label.range_type;
 range_value = capacity_label.range_value;
