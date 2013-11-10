@@ -38,6 +38,8 @@ switch(label.label_type)
         filename = generate_region_outline_filename(label);
     case 'test',
         error('TEST labels do not have associated filenames.');
+    case 'tv_signal',
+        filename = generate_tv_signal_filename(label);
     case 'none',
         filename = 'none';
         
@@ -297,4 +299,13 @@ filename = ['REGION_OUTLINE map_size=' region_outline_label.map_size];
 end
 
 
+% -------------------------------------------------------------------------
+%     TV_SIGNAL
+% -------------------------------------------------------------------------
+function [filename] = generate_tv_signal_filename( tv_signal_label )
+%   [filename] = generate_tv_signal_filename( tv_signal_label )
 
+filename = ['TV_SIGNAL map_size=' tv_signal_label.map_size ...
+    ' tower_year=' tv_signal_label.tower_data_year];
+
+end

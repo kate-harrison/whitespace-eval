@@ -38,6 +38,8 @@ switch(label.label_type)
         validate_region_outline_label(label);
     case 'test',
         validate_test_label(label);
+    case 'tv_signal',
+        validate_tv_signal_label(label);
     case 'none',
     otherwise,
         accepted_values = get_simulation_value('labels');
@@ -255,5 +257,17 @@ function [] = validate_test_label(test_label)
 %   [] = validate_test_label(test_label)
 
 % Do nothing
+
+end
+
+
+% -------------------------------------------------------------------------
+%     TV_SIGNAL
+% -------------------------------------------------------------------------
+function [] = validate_tv_signal_label(tv_signal_label)
+%   [] = validate_tv_signal_label(tv_signal_label)
+
+validate_flags('tv_signal', 'map_size', tv_signal_label.map_size);
+validate_flags('tv_signal', 'tower_data_year', tv_signal_label.tower_data_year);
 
 end

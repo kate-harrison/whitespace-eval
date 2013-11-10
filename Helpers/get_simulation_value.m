@@ -269,7 +269,7 @@ switch(variable_name)
     case 'labels',
         value = ['capacity, ccdf_points, char, fcc_mask, fm_mask, jam, hex, ' ...
             'mac_table, noise, pl_squares, population, region_areas, ' ...
-            'region_mask, region_outline'];
+            'region_mask, region_outline, tv_signal'];
 
     case 'pl_squares_width',
         value = 10;

@@ -282,6 +282,7 @@ switch(file_type)
                 error(['Invalid flag type: ' flag_type]);
         end
         
+        
     otherwise,
         error(['Invalid file type: ' file_type]);
         

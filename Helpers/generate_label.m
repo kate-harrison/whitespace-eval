@@ -42,6 +42,7 @@ function [label] = generate_label(varargin)
 %   REGION_MASK: (map_size)
 %   REGION_OUTLINE: (map_size)
 %   TEST: (test_type)
+%   TV_SIGNAL: (map_size, tower_data_year)
 %
 %
 %   Common inputs:
@@ -116,6 +117,9 @@ switch(varargin{1})
     case 'region_outline',
         num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_region_outline_label(varargin{2:end});
+    case 'tv_signal',
+        num_needed_args = 2; verify_num_args(num_needed_args, nargin, varargin{1});
+        label = generate_tv_signal_label(varargin{2:end});
     case 'test',
         num_needed_args = 1; verify_num_args(num_needed_args, nargin, varargin{1});
         label = generate_test_label(varargin{2:end});
@@ -493,6 +497,19 @@ function [test_label] = generate_test_label( test_type )
 test_label.test_type = test_type;
 
 end
+
+
+% -------------------------------------------------------------------------
+%     TV_SIGNAL
+% -------------------------------------------------------------------------
+function [tv_signal_label] = generate_tv_signal_label(map_size, tower_data_year)
+%   [tv_signal_label] = generate_tv_signal_label(map_size, tower_data_year)
+
+tv_signal_label.map_size = map_size;
+tv_signal_label.tower_data_year = tower_data_year;
+
+end
+
 
 % -------------------------------------------------------------------------
 %     HELPER FUNCTIONS

@@ -45,6 +45,8 @@ function [varargout] = load_by_label(label)
 %
 %   REGION_OUTLINE: [lats longs]
 %
+%   TV_SIGNAL:      [maxiumum_signal_strength]
+%
 %
 % Note: If the data doesn't exist, the function will return an error.
 %
@@ -581,8 +583,19 @@ check_for_warnings(file);
 end
 
 
+function [out] = load_tv_signal_by_label(tv_signal_label)
 
+if (~data_exists(tv_signal_label))
+    make_data(tv_signal_label);
+end
 
+tv_signal_filename = generate_filename(tv_signal_label);
+file = load([tv_signal_filename '.mat']);
+
+out = {file.maxiumum};
+
+check_for_warnings(file);
+end
 
 
 
