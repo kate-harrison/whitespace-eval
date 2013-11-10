@@ -113,5 +113,5 @@ for c = 1:length(chan_list)
     maxiumum_signal_strength(c,:,:) = map.signals;
 end
 
-save_data(filename);
+save_data(generate_filename(tv_signal_label), 'maxiumum_signal_strength');
 

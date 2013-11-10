@@ -81,9 +81,9 @@ else
         
         display(['Working on channel ' num2str(channel) ' (' num2str(length(tx_list)) ' transmitters on this channel)']);
         
-        for t = 1:length(tx_list)
+        for t = 1:size(tx_list,1)
             if (mod(t,10) == 0)
-                display(['Working on tower ' num2str(t) ' out of ' num2str(length(tx_list))]);
+                display(['Working on tower ' num2str(t) ' out of ' num2str(size(tx_list,1))]);
             end
             
             % Clear variables from last iteration
