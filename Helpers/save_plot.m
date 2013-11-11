@@ -73,14 +73,16 @@ end
 
 
 %% Save the plot
+base_filename = [get_simulation_value('output_dir') '/' plot_filename];
+
 switch(format)
     case {'png'},
-        print('-dpng', ['Output/' plot_filename '.png']);
+        print('-dpng', [base_filename '.png']);
     case {'vector', 'eps'},
-        print('-depsc', ['Output/' plot_filename '.eps']);
+        print('-depsc', [base_filename '.eps']);
         
     case {'bitmap', 'jpeg'},
-        print('-djpeg', ['Output/' plot_filename '.jpeg']);
+        print('-djpeg', [base_filename '.jpeg']);
 end
 
 end

@@ -41,6 +41,7 @@ function [varargout] = get_simulation_value(variable_name)
 %
 % DIRECTORIES   (does NOT include trailing /)
 %   data_dir - base directory for generated data
+%   output_dir - base directory in which to save figures
 %   population_data_dir - base directory for raw population data
 %   tower_data_dir - base directory for raw tower assignment data
 %   temp_dir - directory for storing temporary files
@@ -260,6 +261,9 @@ switch(variable_name)
         
     case 'misc_dir',
         value = [get_simulation_value('data_dir') '/MISC'];
+        
+    case 'output_dir',
+        value = ['Output/' get_simulation_value('region_code')];
 % END DIRECTORIES
 
 
