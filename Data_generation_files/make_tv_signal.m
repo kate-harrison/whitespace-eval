@@ -1,6 +1,8 @@
 function [] = make_tv_signal(tv_signal_label)
-
-%% Description of method: find the strongest TV signal across the US
+%   [] = make_tv_signal(tv_signal_label)
+%
+% Find the magnitude of the strongest TV signal at points across the US
+%
 % We wish to find the strength of the strongest TV signal at each location
 % in the US (on each channel). To do this, we will use the following
 % algorithm:
@@ -11,8 +13,8 @@ function [] = make_tv_signal(tv_signal_label)
 % * - If n = 0, try the second-strongest and so on until n > 0
 % * - Compute the signal strengths for all of the towers in this set and
 % keep the maximum
-
-%% Assumptions
+%
+% Assumptions:
 %
 % * Noise = TNP
 % * Cut out towers not on the current channel
@@ -113,5 +115,4 @@ for c = 1:length(chan_list)
     maxiumum_signal_strength(c,:,:) = map.signals;
 end
 
-save_data(generate_filename(tv_signal_label), 'maxiumum_signal_strength');
-
+save_data(save_filename(tv_signal_label), 'maxiumum_signal_strength');

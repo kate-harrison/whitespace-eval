@@ -592,7 +592,7 @@ end
 tv_signal_filename = generate_filename(tv_signal_label);
 file = load([tv_signal_filename '.mat']);
 
-out = {file.maxiumum};
+out = {file.maxiumum_signal_strength};
 
 check_for_warnings(file);
 end
